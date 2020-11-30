@@ -33,7 +33,11 @@ server.on('connection', socket => {
     }) */
 })
 
-// 监听地址以及端口
-server.listen(4444, '127.0.0.1', () => {
+// 监听地址以及端口，ip默认为0.0.0.0，表示监听系统网卡的所有地址
+server.listen(4444, () => {
   console.log("[+] TCP server listen 127.0.0.1:4444...")
 });
+
+// server.listen(4444, '127.0.0.1', () => {
+//   console.log("[+] TCP server listen 127.0.0.1:4444...")
+// });

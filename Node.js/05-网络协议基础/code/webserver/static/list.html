@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h1>商品列表</h1>
+    <ul>
+      <li v-for="(item,index) in goodsList">{{index}}-----{{item.goods_name}}-----￥{{item.goods_price}}</li>
+    </ul>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        goodsList: []
+      },
+      created() {
+        fetch('/user').then(res => {
+          // 返回的还是一个Promise
+          return res.json()
+        }).then(res => {
+          console.log(res);
+          this.goodsList = res;
+        })
+      }
+    })
+  </script>
+</body>
+
+</html>

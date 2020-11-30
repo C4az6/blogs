@@ -31,7 +31,7 @@ clientSocket.on('end', () => {
   //  /* 
   //   把接收到的数据组合起来吗，然后通过fs写入到client文件夹中
   //   注意：我们接收到的数据是buffer
-  //   保存写入buffer数据到文件夹
+  //   保存写入buffer数据到文件
   //  */
   if (!fs.existsSync(__dirname + '/client')) {
     fs.mkdirSync('./client');
