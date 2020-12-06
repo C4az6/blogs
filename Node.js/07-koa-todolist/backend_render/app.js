@@ -2,21 +2,10 @@ const Koa = require('koa');
 const StaticCache = require('koa-static-cache');
 const Router = require('koa-router');
 const BodyParser = require('koa-bodyparser');
+const fs = require('fs');
 
+let todosDatas = JSON.parse(fs.readFileSync('./data/data.json'));
 const app = new Koa();
-const todosDatas = {
-  _id: 3,
-  data: [{
-    title: '学习Node.js',
-    done: true
-  }, {
-    title: '学习Koa',
-    done: true
-  }, {
-    title: '学习MySQL',
-    done: false
-  }]
-}
 app.use(StaticCache('./static', {
   prefix: '/static',
   gzip: true
@@ -54,6 +43,8 @@ router.post('/add', ctx => {
     code: 1,
     data: '添加成功'
   }
+  fs.writeFileSync('./data/data.json', JSON.stringify(todosDatas));
+
 })
 
 // 删除todos数据API
@@ -72,6 +63,8 @@ router.post('/remove', ctx => {
     code: 1,
     data: '删除成功!'
   }
+  fs.writeFileSync('./data/data.json', JSON.stringify(todosDatas));
+
 })
 
 // 修改todos任务状态API
@@ -98,6 +91,7 @@ router.post('/modifyStatus', ctx => {
     code: 1,
     data: todosDatas.data
   }
+  fs.writeFileSync('./data/data.json', JSON.stringify(todosDatas));
 })
 
 app.use(router.routes());

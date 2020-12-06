@@ -367,3 +367,260 @@ a:hover {
 
 ## 前端渲染版本
 
+![1607286578457](medias/1607286578457.png)
+
+`app.js`
+
+```js
+const Koa = require('koa');
+const StaticCache = require('koa-static-cache');
+const Router = require('koa-router');
+const BodyParser = require('koa-bodyparser');
+const fs = require('fs');
+
+let todosDatas = JSON.parse(fs.readFileSync('./data/data.json'));
+const app = new Koa();
+app.use(StaticCache('./static', {
+  prefix: '/static',
+  gzip: true
+}));
+
+app.use(BodyParser());
+
+const router = new Router();
+
+// 查询todos列表数据API
+router.get('/getTodoList', ctx => {
+  ctx.body = {
+    code: 1,
+    data: todosDatas
+  }
+})
+
+// 添加todos数据API
+router.post('/add', ctx => {
+  // 接收前端传递过来的title，然后将title写入todosDatas的data数组中
+  let title = ctx.request.body.title || "";
+  if (!title) {
+    ctx.body = {
+      code: 0,
+      data: 'title不能为空'
+    }
+    return
+  }
+  todosDatas._id++;
+  todosDatas.data.push({
+    title,
+    done: false
+  });
+  ctx.body = {
+    code: 1,
+    data: '添加成功'
+  }
+  fs.writeFileSync('./data/data.json', JSON.stringify(todosDatas));
+
+})
+
+// 删除todos数据API
+router.post('/remove', ctx => {
+  let title = ctx.request.body.title || "";
+  if (!title) {
+    ctx.body = {
+      code: 0,
+      data: '删除失败!'
+    }
+    return
+  }
+  todosDatas._id--;
+  todosDatas.data = todosDatas.data.filter(item => item.title !== title);
+  ctx.body = {
+    code: 1,
+    data: '删除成功!'
+  }
+  fs.writeFileSync('./data/data.json', JSON.stringify(todosDatas));
+
+})
+
+// 修改todos任务状态API
+router.post('/modifyStatus', ctx => {
+  let {
+    title,
+    done
+  } = ctx.request.body || "";
+  console.log(ctx.request.body);
+  if (!title) {
+    ctx.body = {
+      code: 0,
+      data: '修改任务状态失败!'
+    }
+    return
+  }
+  todosDatas.data.forEach(item => {
+    // if(item.title === title) {
+    //   item.done = done
+    // }
+    (item.title === title) && (item.done = done);
+  })
+  ctx.body = {
+    code: 1,
+    data: todosDatas.data
+  }
+  fs.writeFileSync('./data/data.json', JSON.stringify(todosDatas));
+})
+
+app.use(router.routes());
+
+app.listen(80, () => {
+  console.log("server is running at: 0.0.0.0:80");
+});
+```
+
+
+
+`index.html`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+  <style>
+    * {
+      /* margin: 0; */
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .done {
+      text-decoration: line-through;
+    }
+
+    ul,
+    li {
+      list-style: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h1>TodoList Ajax</h1>
+    <hr />
+    <input type="text" placeholder="请输入任务" v-model="taskValue">
+    <button @click="handleAddTask">添加</button>
+    <ul>
+      <li v-for="(item,index) in list" :key="index">
+        <span>[{{index}}]</span>
+        <input type="checkbox" @click="handleCheckboxClick(item)" :checked="item.done">
+        <span :class="item.done?'done':''">{{item.title}}</span>
+        <button @click="handleRemoveItem(item.title)">删除</button>
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        list: [], // todoList列表数据
+        taskValue: "", // 任务标题
+      },
+      methods: {
+        // 获取数据函数
+        getList() {
+          fetch('http://127.0.0.1/getTodoList').then(res => {
+            return res.json();
+          }).then(response => {
+            if (response.code) {
+              this.list = response.data.data;
+            }
+          })
+        },
+        // 添加任务接口
+        handleAddTask() {
+          console.log("要添加的任务标题: ", this.taskValue);
+          fetch('http://127.0.0.1/add', {
+            method: 'POST',
+            // 不设置请求头的话Koa2框架的bodyParser获取数据
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              title: this.taskValue
+            })
+          }).then(res => res.json()).then(response => {
+            console.log("response: ", response);
+            if (!response.code) {
+              alert(response.data);
+            } else {
+              this.taskValue = "";
+              alert("添加成功!");
+              this.getList();
+            }
+          })
+        },
+        // 监听修改任务状态事件
+        handleCheckboxClick(item) {
+          console.log(item);
+          fetch('http://127.0.0.1/modifyStatus', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              title: item.title,
+              done: !item.done
+            })
+          }).then(res => res.json()).then(response => {
+            if (!response.code) {
+              alert(response.data);
+            } else {
+              this.getList();
+            }
+          })
+          // item.done = !item.done;
+        },
+        // 监听删除任务事件
+        handleRemoveItem(title) {
+          fetch('http://127.0.0.1/remove', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              title
+            })
+          }).then(res => res.json()).then(response => {
+            if (!response.code) {
+              alert(response.data)
+            } else {
+              alert(response.data);
+              this.getList();
+            }
+          })
+        }
+      },
+      created() {
+        this.getList()
+      }
+    })
+  </script>
+</body>
+
+</html>
+```
+
+
+
+`data.json`
+
+```json
+{"_id":3,"data":[{"title":"学习Node.js","done":true},{"title":"学习Koa","done":true},{"title":"学习MySQL","done":true}]}
+```
+
+
+
