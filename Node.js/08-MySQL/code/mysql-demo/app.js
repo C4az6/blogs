@@ -3,6 +3,7 @@
   const Static = require('koa-static-cache');
   const Router = require('koa-router');
   const fs = require('fs');
+  const Mysql = require('mysql2/promise');
 
   const app = new Koa();
   const router = new Router();
