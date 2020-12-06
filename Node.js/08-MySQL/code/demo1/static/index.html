@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+</head>
+
+<body>
+  <h1>Todos</h1>
+  <hr />
+  <div id="app">
+    <input type="text" placeholder="请输入任务..." v-model="taskValue">
+    <input type="button" value="添加" @click="handleAddTask">
+    <ul>
+      <li v-for="(item, index) in list">
+        <span>{{item.id}}</span>
+        <span>{{item.title}}</span>
+        <button>删除</button>
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        list: [],
+        taskValue: ""
+      },
+      methods: {
+        // 获取todos列表数据
+        getList() {
+          fetch('/getList').then(res => res.json())
+            .then(response => {
+              this.list = response;
+              console.log(this.list)
+            })
+        },
+        // 监听添加todos任务事件
+        handleAddTask() {
+          console.log(this.taskValue);
+          if (!this.taskValue.trim()) {
+            alert('任务标题不能为空!');
+          } else {
+            fetch('/add', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  title: this.taskValue
+                })
+              }).then(res => res.json())
+              .then(response => {
+                console.log(response);
+                if (response.code) {
+                  this.taskValue = "";
+                  this.getList();
+                }
+              })
+          }
+        }
+      },
+      created() {
+        console.log("created...");
+        this.getList();
+      }
+    })
+  </script>
+</body>
+
+</html>

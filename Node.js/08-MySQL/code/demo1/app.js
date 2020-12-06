@@ -1,24 +1,69 @@
-(async function () {
-  const mysql = require('mysql2/promise');
+const {
+  create
+} = require('domain');
 
-  const connection = await mysql.createConnection({
+(async function () {
+  const Koa = require('koa');
+  const Static = require('koa-static-cache');
+  const Router = require('koa-router');
+  const BodyParser = require('koa-bodyparser');
+  const Mysql = require('mysql2/promise');
+  const fs = require('fs');
+
+  const app = new Koa()
+  // 创建数据库连接
+  const connection = await Mysql.createConnection({
     host: '127.0.0.1',
     user: 'root',
     password: 'root',
-    database: 'miaov'
-  });
-
-  /**
-   * arr返回一个数组，第一个数组是记录的值，第二个数组是记录中包含的字段的信息
-   */
-  // let arr = await connection.query('select * from users');
-  // console.log(arr);
-
-  // 数组的解构操作，解构数组中的第一项
-  let [users] = await connection.query("select * from users");
-  console.log(users);
-
-  users.forEach(item => {
-    console.log(item);
+    database: 'todos'
   })
+
+  // 使用bodyParser处理正文数据
+  app.use(BodyParser())
+
+  // 托管静态资源
+  app.use(Static('./static', {
+    prefix: '/public',
+    gzip: true
+  }))
+
+  const router = new Router();
+  router.get('/', async ctx => {
+    ctx.body = await fs.readFileSync('./static/index.html').toString();
+  })
+
+  router.get('/getList', async ctx => {
+    const [res] = await connection.query('select * from todos');
+    console.log(res);
+    ctx.body = res;
+  })
+
+  router.post('/add', async ctx => {
+    let {
+      title
+    } = ctx.request.body || "";
+    console.log(title);
+    if (!title.trim()) {
+      // 为空的情况
+      ctx.body = {
+        code: 0,
+        data: 'title不能为空!'
+      }
+    } else {
+      const [res] = await connection.query(`insert into todos (title, done) values ('${title}', 0)`)
+      console.log(res);
+      ctx.body = {
+        code: 1,
+        data: '添加数据成功!'
+      }
+    }
+  })
+
+  app.use(router.routes());
+
+  app.listen(80, () => {
+    console.log("koa server listen: 0.0.0.0:80")
+  })
+
 })()

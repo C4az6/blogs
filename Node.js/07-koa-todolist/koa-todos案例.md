@@ -401,7 +401,7 @@ router.get('/getTodoList', ctx => {
 router.post('/add', ctx => {
   // 接收前端传递过来的title，然后将title写入todosDatas的data数组中
   let title = ctx.request.body.title || "";
-  if (!title) {
+  if (!title.trim()) {
     ctx.body = {
       code: 0,
       data: 'title不能为空'
@@ -424,7 +424,7 @@ router.post('/add', ctx => {
 // 删除todos数据API
 router.post('/remove', ctx => {
   let title = ctx.request.body.title || "";
-  if (!title) {
+  if (!title.tirm()) {
     ctx.body = {
       code: 0,
       data: '删除失败!'
@@ -448,7 +448,7 @@ router.post('/modifyStatus', ctx => {
     done
   } = ctx.request.body || "";
   console.log(ctx.request.body);
-  if (!title) {
+  if (!title.trim()) {
     ctx.body = {
       code: 0,
       data: '修改任务状态失败!'
