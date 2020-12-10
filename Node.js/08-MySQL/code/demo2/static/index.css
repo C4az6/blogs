@@ -61,6 +61,12 @@ h6 {
 }
 .title {
   color: #0dbc79;
+  transition: all 1s;
+}
+.title:hover {
+  cursor: pointer;
+  color: hotpink;
+  transform: rotateX(180deg);
 }
 body {
   background-color: #1e1e1e;
@@ -69,4 +75,15 @@ body {
 #app > ul > li {
   font-size: 20px;
   line-height: 40px;
+  transition: all 1s linear, transform 0.4s linear;
+}
+#app > ul > li:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+  background-color: hotpink;
+}
+.done {
+  text-decoration: line-through;
+  font-style: italic;
+  color: #0dbc79;
 }

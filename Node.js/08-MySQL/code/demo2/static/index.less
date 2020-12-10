@@ -1,6 +1,7 @@
 /* 引入样式初始化的css库 */
 // @import url('https://necolas.github.io/normalize.css/latest/normalize.css');
 @import url('./normalize.css');
+
 * {
   box-sizing: border-box;
 }
@@ -70,6 +71,13 @@ h6 {
 
 .title {
   color: #0dbc79;
+  transition: all 1s;
+}
+
+.title:hover {
+  cursor: pointer;
+  color: hotpink;
+  transform: rotateX(180deg);
 }
 
 body {
@@ -79,5 +87,18 @@ body {
 
 #app>ul>li {
   font-size: 20px;
-  line-height:40px;
+  line-height: 40px;
+  transition: all 1s linear, transform .4s linear;
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    background-color: hotpink;
+  }
+}
+
+.done {
+  text-decoration: line-through;
+  font-style: italic;
+  color: #0dbc79;
 }

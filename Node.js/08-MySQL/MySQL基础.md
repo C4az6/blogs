@@ -24,6 +24,26 @@ MySQL 服务就是维护了若干个这样的库。
 
 ### 查询数据
 
+#### 排序查询
+
+#### 数量限制查询
+
+SELECT column_name,column_name FROM table_name [LIMIT N]
+
+N：数字，要限制的查询数据的最大条数
+
+```sql
+select id,done,title from todos where status=1 limit 5
+```
+
+### 查询与偏移
+
+
+
+
+
+#### 分页查询
+
 
 
 ### 添加数据
@@ -41,6 +61,16 @@ MySQL 服务就是维护了若干个这样的库。
 > 例如把要删除的数据的status改变成0，查询的时候直接查询status非0的数据即可。
 
 
+
+
+
+
+
+## 待解决的BUG
+
+![1607597595288](medias/1607597595288.png)
+
+服务跑一会就会自动挂掉，然后就得重启才行，莫名其妙。
 
 
 
