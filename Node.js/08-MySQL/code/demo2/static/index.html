@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+  <!-- 引入雪花特效的脚本 -->
+  <script src="./snow.js"></script>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div id="app" class="w">
+    <h1 class="title">Todos</h1>
+    <hr />
+    <input type="search" v-model="searchValue">
+    <button @click="handleSearchClick">搜索</button>&nbsp;&nbsp;
+    <button @click="handleAddTask">添加数据</button>
+    <ul>
+      <li v-for="(item, index) in todosList" :key="index">
+        <span>[{{item.id}}]&nbsp;&nbsp;</span>
+        <input type="checkbox" @click.prevent="handleChangeTaskStatus">
+        <span>{{item.title}}</span>
+        &nbsp;&nbsp;&nbsp;
+        <button @click="handleRemoveTask(item.id)">删除</button>
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    // 配置雪花特效参数
+    /*     snow.down()
+        snow.info.top = "50%";
+        snow.info.left = "50%";
+        snow.info.number = 100; */
+    new Vue({
+      el: '#app',
+      data: {
+        todosList: [], // todos列表数据
+        searchValue: "", // 搜索的任务值
+      },
+      methods: {
+        // 获取todos列表数据
+        getList() {
+          fetch('/getList').then(res => res.json())
+            .then(response => {
+              if (response.code != 0) {
+                alert(response.data)
+              } else {
+                this.todosList = response.data;
+              }
+            });
+        },
+
+        // 监听用户点击搜索事件
+        handleSearchClick() {
+          if (!this.searchValue.trim()) {
+            console.log('搜索全部任务列表数据...');
+          } else {
+            console.log(`搜索包含 ${this.searchValue} 关键词的数据...`);
+            this.searchValue = "";
+          }
+        },
+
+        // 监听添加数据
+        handleAddTask() {
+          let title = prompt('请输入要添加的任务.');
+          if (!title.trim()) {
+            return alert('😣任务标题不能为空!')
+          }
+          let params = JSON.stringify({
+            title
+          });
+          fetch('/add', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: params
+            }).then(res => res.json())
+            .then(response => {
+              if (response.code != 0) {
+                alert(response.data);
+              } else {
+                // 添加成功
+                alert(response.data);
+                this.getList();
+              }
+            })
+        },
+
+        // 监听删除任务事件
+        handleRemoveTask(id){
+          console.log(id);
+          fetch('/remove', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({id})
+          }).then(res=>res.json())
+          .then(response=>{
+            console.log(response);
+            if(response.code!=0) {
+              alert(response.data);
+            }else {
+              alert(response.data)
+              this.getList();
+            }
+          })
+        },
+
+        // 修改任务状态
+        handleChangeTaskStatus() {
+          console.log('change task status...')
+        }
+      },
+      created() {
+        this.getList()
+      }
+    })
+  </script>
+</body>
+
+</html>

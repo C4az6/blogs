@@ -1,7 +1,3 @@
-const {
-  create
-} = require('domain');
-
 (async function () {
   const Koa = require('koa');
   const Static = require('koa-static-cache');
@@ -28,12 +24,14 @@ const {
     gzip: true
   }))
 
+  // 创建Router的实例对象
   const router = new Router();
   router.get('/', async ctx => {
-    ctx.body = await fs.readFileSync('./static/index.html').toString();
+    ctx.body = fs.readFileSync('./static/index.html').toString();
   })
 
   router.get('/getList', async ctx => {
+    // 查询数据库是一个异步操作，因此需要使用await进行等待查询结果
     const [res] = await connection.query('select * from todos');
     console.log(res);
     ctx.body = res;
