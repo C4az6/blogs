@@ -38,21 +38,97 @@ select id,done,title from todos where status=1 limit 5
 
 ### 查询与偏移
 
+SELECT column_name,column_name FROM table_name [LIMIT N] [OFFSET M]
 
+M：数字，要偏移的数量值，从 0 开始
 
+OFFSET必须与LIMIT一起使用，且LIMIT在前
 
+```sql
+select * from todos where status=1 limit 5 offset 5;
+```
 
-#### 分页查询
-
-
+每页查询5条数据，从第二页开始。
 
 ### 添加数据
+
+INSERT INTO table_name ( field1, ...fieldN ) VALUES ( value1, ...valueN );
+
+Node.js - mysql2
+connection.query('INSERT INTO `users` SET ?', {key:value,...})
+
+返回值依据其操作来决定
+
+INSERT INTO：[{affectedRows ,insertId}，undefined]
+
+```js
+  // 添加任务 API
+  router.post('/add', async ctx => {
+    console.log(ctx.request.body);
+    let {
+      title
+    } = ctx.request.body || "";
+    if (!title.trim()) {
+      ctx.body = {
+        code: 1,
+        data: '任务标题不能为空'
+      }
+      return
+    }
+    let sql = `INSERT INTO todos (title, done) VALUES ('${title}', 0)`;
+    let [res] = await connection.query(sql);
+    if (res.affectedRows > 0) {
+      // 插入成功
+      ctx.body = {
+        code: 0,
+        data: '添加成功'
+      }
+    } else {
+      ctx.body = {
+        code: 2,
+        data: '添加失败'
+      }
+    }
+  })
+```
 
 
 
 ### 更新数据
 
+UPDATE table_name SET field1=value1;
 
+Node.js - mysql2
+
+返回值依据其操作来决定
+
+UPDATE：[{affectedRows ,insertId}，undefined]
+
+```js
+  // 修改任务状态
+  router.post('/change', async ctx => {
+    let {
+      id,
+      done
+    } = ctx.request.body;
+    console.log(ctx.request.body);
+    let sql = `UPDATE todos SET done=${done} WHERE id=${id}`;
+    let [res] = await connection.query(sql);
+    if (res.affectedRows > 0) {
+      // 更新成功
+      ctx.body = {
+        code: 0,
+        data: '更新成功'
+      }
+    } else {
+      // 更新失败
+      ctx.body = {
+        code: 1,
+        data: '更新失败'
+      }
+    }
+  })
+```
 
 ### 删除数据
 
@@ -60,11 +136,56 @@ select id,done,title from todos where status=1 limit 5
 >
 > 例如把要删除的数据的status改变成0，查询的时候直接查询status非0的数据即可。
 
+DELETE FROM table_name [WHERE];
+Node.js - mysql2
 
+connection.query('DELETE FROM `users` WHERE id=?', [1])
 
+返回值依据其操作来决定
 
+INSERT INTO：[{affectedRows}，undefined]
 
+```js
+  // 删除任务 API
+  router.post('/remove', async ctx => {
+    console.log(ctx.request.body);
+    let {
+      id
+    } = ctx.request.body;
+    // let sql = `DELETE FROM todos WHERE id=${id}`;  DELETE太危险了,别这么干
+    let sql = `UPDATE todos SET status=0 WHERE id=${id}`
+    let [res] = await connection.query(sql);
+    if (res.affectedRows > 0) {
+      // 删除成功
+      ctx.body = {
+        code: 0,
+        data: '删除成功'
+      }
+    } else {
+      // 删除失败
+      ctx.body = {
+        code: 1,
+        data: '删除失败'
+      }
+    }
+  })
+```
 
+### 模糊查询
+
+LIKE 模糊查询，通常与 % 配合使用。
+
+%123：以 123结尾的内容
+123%：以 123开头的内容
+%123%：包含 123的内容
+SELECT column_name... FROM table_name WHERE column_name LIKE %123%
+NOT LIKE：与 LIKE 相反
+
+## todos案例
+
+![1607654559034](medias/1607654559034.png)
+
+[案例Github地址](https://github.com/C4az6/koa-mysql-todos)
 
 ## 待解决的BUG
 
@@ -74,23 +195,13 @@ select id,done,title from todos where status=1 limit 5
 
 
 
-## 补充
+## 拓展学习
 
-### koa-body-parser到底是什么?
+存储引擎：https://dev.mysql.com/doc/refman/5.7/en/storage-engine-setting.html
+字符集、编码：https://dev.mysql.com/doc/refman/5.7/en/charset.html
+数据类型：https://dev.mysql.com/doc/refman/5.7/en/data-types.html
+主键：https://dev.mysql.com/doc/refman/5.7/en/primary-key-optimization.html
+自动增长：https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html
+索引：https://dev.mysql.com/doc/refman/5.7/en/column-indexes.html
 
-一个用来解析请求数据的中间件，koa中设置了bodyparser之后会自动挂载到ctx.request.body中。
-
-
-
-### Normalize.css
-
-一个CSS样式重置的库，兼容其他浏览器，非常好用。
-
-官方文档：<http://nicolasgallagher.com/about-normalize-css/>
-
-中文翻译文档：<https://jerryzou.com/posts/aboutNormalizeCss/>
-
-项目地址：<https://github.com/necolas/normalize.css/>
-
-
-
+菜鸟教程Mysql：<https://www.runoob.com/mysql/mysql-tutorial.html>

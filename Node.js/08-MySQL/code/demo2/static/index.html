@@ -97,7 +97,6 @@
             this.params.keyword = this.searchValue;
             this.getList();
             this.searchValue = "";
-            this.params.keyword = "";
           }
         },
 
@@ -124,6 +123,7 @@
               } else {
                 // 添加成功
                 alert(response.data);
+                this.params.keyword = "";
                 this.getList();
               }
             })
