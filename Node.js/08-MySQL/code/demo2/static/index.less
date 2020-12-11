@@ -64,7 +64,8 @@ h6 {
   font-weight: normal;
 }
 
-html,body {
+html,
+body {
   height: 100%;
 }
 
@@ -88,6 +89,10 @@ html,body {
 body {
   background-color: #1e1e1e;
   color: #fff;
+}
+
+#app>ul.todos-list-wrap {
+  min-height: 200px;
 }
 
 #app>ul.todos-list-wrap>li {
@@ -114,12 +119,15 @@ ul.pagination {
 
   li {
     display: flex;
+
     a {
       color: #fff;
       padding: 8px 16px;
       transition: background-color .3s;
       border: 1px solid #ddd;
       margin: 0 4px;
+      border-radius: 4px;
+
       &.active {
         background-color: #0dbc79;
         color: #fff;
@@ -129,5 +137,38 @@ ul.pagination {
         background-color: #ddd;
       }
     }
+  }
+}
+
+button {
+  background-color: #4CAF50;
+  /* Green */
+  border: none;
+  color: white;
+  padding: 5px 22px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  outline: none;
+  font-size: 16px;
+  border-radius: 2px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+input[type="search"] {
+  width: 200px;
+  transition: all .5s;
+  background-color: #0d1117;
+  border-radius: 4px;
+  color: #fff;
+  border: none;
+  height: 30px;
+  text-indent: 10px;
+
+  &:focus {
+    width: 300px;
   }
 }

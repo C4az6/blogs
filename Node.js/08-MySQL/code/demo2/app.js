@@ -1,4 +1,6 @@
-const { ifError } = require('assert');
+const {
+  ifError
+} = require('assert');
 const bodyParser = require('koa-bodyparser');
 
 (async function () {
@@ -44,7 +46,7 @@ const bodyParser = require('koa-bodyparser');
    */
 
   // 访问/的路由
-  router.get('/', async ctx=>{
+  router.get('/', async ctx => {
     ctx.body = await fs.readFileSync('./static/index.html').toString();
   })
 
@@ -71,29 +73,29 @@ const bodyParser = require('koa-bodyparser');
      * 总页码
      */
 
-     let page = ctx.query.page || 1;  // 这个page页码参数应该由前端来决定是多少
-     let pageSize = ctx.query.pageSize || 4;    //  每页显示条数
-     let type = ctx.query.type;
-     page = Number(page);
-     pageSize = Number(pageSize);
-     let where = '';
-     if(type) where = 'where done = ' + type;
-     // 查询总记录数
-     let sql = `select * from todos ${where}`;
-     const [todosAll] = await connection.query(sql);
-     // 总的页码 = 总的数据量 / 每页显示条数，注意小数，需要向上取整
-     const totalPages = Math.ceil(todosAll.length / pageSize);
+    let page = ctx.query.page || 1; // 这个page页码参数应该由前端来决定是多少
+    let pageSize = ctx.query.pageSize || 4; //  每页显示条数
+    let type = ctx.query.type || "";
+    let keyword = ctx.query.keyword || "";
+    page = Number(page);
+    pageSize = Number(pageSize);
+    let where = `where status = 1 and title like '%${keyword}%' order by done ASC, id DESC`;
+    // 查询总记录数
+    let sql = `select * from todos ${where}`;
+    const [todosAll] = await connection.query(sql);
+    // 总的页码 = 总的数据量 / 每页显示条数，注意小数，需要向上取整
+    const totalPages = Math.ceil(todosAll.length / pageSize);
 
-     const sql2 = `select * from todos ${where} LIMIT ? OFFSET ?`;
-     const [todos] = await connection.query(sql2, [pageSize, (page-1) * pageSize])
+    const sql2 = `select * from todos ${where} LIMIT ? OFFSET ?`;
+    const [todos] = await connection.query(sql2, [pageSize, (page - 1) * pageSize])
     // 前后端约定：code为0 表示正确，不为0则表示错误
     ctx.body = {
       code: 0,
       data: {
-        page,   // 页码
-        pageSize,   // 每页显示条数
-        totalPages,    // 总页码数
-        todos   // 列表数据
+        page, // 页码
+        pageSize, // 每页显示条数
+        totalPages, // 总页码数
+        todos // 列表数据
       }
     };
   })
