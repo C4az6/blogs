@@ -18,7 +18,7 @@
     <input type="search" v-model="searchValue" placeholder="想要搜些什么呢?">
     <button @click="handleSearchClick">搜索</button>&nbsp;&nbsp;
     <button @click="handleAddTask">添加数据</button>
-    <ul>
+    <ul class="todos-list-wrap">
       <li v-for="(item, index) in todosList" :key="index" :class="item.done?'done':''">
         <span>[{{item.id}}]&nbsp;&nbsp;</span>
         <input type="checkbox" @click.prevent="handleChangeTaskStatus(item)" 
@@ -26,6 +26,29 @@
         <span>{{item.title}}</span>
         &nbsp;&nbsp;&nbsp;
         <button @click="handleRemoveTask(item.id)">删除</button>
+      </li>
+    </ul>
+
+    <!-- <div class="pages-wrap">
+      <a href="javascript:;" 
+      v-for="n in totalPages"
+      :class="{active: n==params.page}"
+      @click.prevent="handleChangePage(n)"
+      >{{n}}</a>
+    </div> -->
+
+    <ul class="pagination">
+      <li>
+        <a href="javascript:;" @click="handlePrePage">«</a>
+      </li>
+      <li v-for="n in totalPages">
+        <a href="javascript:;"
+        :class="{active: n == params.page}"
+        @click.prevent="handleChangePage(n)"
+        >{{n}}</a>
+      </li>
+      <li>
+        <a href="javascript:;" @click="handleNextPage">»</a>
       </li>
     </ul>
   </div>
@@ -41,16 +64,24 @@
       data: {
         todosList: [], // todos列表数据
         searchValue: "", // 搜索的任务值
+        params: {   // 分页参数
+          page: 1,    // 当前页码
+          pageSize: 5,  // 每页显示条数
+          type: ''    // 任务状态  1：已完成  0：未完成，默认显示全部任务
+        },
+        totalPages: 0     // 总页码数
       },
       methods: {
         // 获取todos列表数据
         getList() {
-          fetch('/getList').then(res => res.json())
+          fetch(`/getList?page=${this.params.page}&pageSize=${this.params.pageSize}`)
+          .then(res => res.json())
             .then(response => {
               if (response.code != 0) {
                 alert(response.data)
               } else {
-                this.todosList = response.data;
+                this.todosList = response.data.todos;
+                this.totalPages = response.data.totalPages;
               }
             });
         },
@@ -140,6 +171,27 @@
               this.getList()
             }
           })
+        },
+        
+        // 监听页码改变
+        handleChangePage(page){
+          console.log(page)
+          this.params.page = page;
+          this.getList();
+        },
+        // 监听用户点击上一页按钮
+        handlePrePage(){
+          if(this.params.page!==1) {
+            this.params.page--;
+            this.getList();
+          }
+        },
+        // 监听用户点击下一页按钮
+        handleNextPage(){
+          if(this.params.page!==this.params.pageSize) {
+            this.params.page++;
+            this.getList();
+          }
         }
       },
       created() {

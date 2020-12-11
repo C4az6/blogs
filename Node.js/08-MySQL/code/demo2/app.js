@@ -1,3 +1,4 @@
+const { ifError } = require('assert');
 const bodyParser = require('koa-bodyparser');
 
 (async function () {
@@ -49,13 +50,51 @@ const bodyParser = require('koa-bodyparser');
 
   // 获取Todos列表数据 API
   router.get('/getList', async ctx => {
-    // 查询数据库
-    let sql = 'select * from todos where status=1 limit 5';
-    const [todosList] = await connection.query(sql);
+    /**
+     * 查询数量限制
+     * LIMIT - top 10，前10条数据
+     * 查询偏移
+     * OFFSET
+     * 
+     * 分页：
+     *  把一定的数据按照每页固定的条数去显示，我们需要首先定义每页显示多少
+     * 
+     * 每页显示3条
+     *  1. 0 - 2
+     *  2. 3 - 5
+     *  3. 6 - 8
+     * 每页显示 -> LIMIT
+     * 当前的页码 -> OFFSET
+     * 
+     * 如果页码从1开始，那么对应的记录应该 LIMIT 3 OFFSET （页码-1 * 3）
+     * 
+     * 总页码
+     */
+
+     let page = ctx.query.page || 1;  // 这个page页码参数应该由前端来决定是多少
+     let pageSize = ctx.query.pageSize || 4;    //  每页显示条数
+     let type = ctx.query.type;
+     page = Number(page);
+     pageSize = Number(pageSize);
+     let where = '';
+     if(type) where = 'where done = ' + type;
+     // 查询总记录数
+     let sql = `select * from todos ${where}`;
+     const [todosAll] = await connection.query(sql);
+     // 总的页码 = 总的数据量 / 每页显示条数，注意小数，需要向上取整
+     const totalPages = Math.ceil(todosAll.length / pageSize);
+
+     const sql2 = `select * from todos ${where} LIMIT ? OFFSET ?`;
+     const [todos] = await connection.query(sql2, [pageSize, (page-1) * pageSize])
     // 前后端约定：code为0 表示正确，不为0则表示错误
     ctx.body = {
       code: 0,
-      data: todosList
+      data: {
+        page,   // 页码
+        pageSize,   // 每页显示条数
+        totalPages,    // 总页码数
+        todos   // 列表数据
+      }
     };
   })
 

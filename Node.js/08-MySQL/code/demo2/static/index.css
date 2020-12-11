@@ -55,8 +55,13 @@ h5,
 h6 {
   font-weight: normal;
 }
+html,
+body {
+  height: 100%;
+}
 .w {
   width: 1200px;
+  height: 100%;
   margin: 0 auto;
 }
 .title {
@@ -72,12 +77,12 @@ body {
   background-color: #1e1e1e;
   color: #fff;
 }
-#app > ul > li {
+#app > ul.todos-list-wrap > li {
   font-size: 20px;
   line-height: 40px;
   transition: all 1s linear, transform 0.4s linear;
 }
-#app > ul > li:hover {
+#app > ul.todos-list-wrap > li:hover {
   cursor: pointer;
   transform: scale(1.1);
   background-color: hotpink;
@@ -86,4 +91,25 @@ body {
   text-decoration: line-through;
   font-style: italic;
   color: #0dbc79;
+}
+ul.pagination {
+  display: flex;
+  margin-top: 30px;
+}
+ul.pagination li {
+  display: flex;
+}
+ul.pagination li a {
+  color: #fff;
+  padding: 8px 16px;
+  transition: background-color 0.3s;
+  border: 1px solid #ddd;
+  margin: 0 4px;
+}
+ul.pagination li a.active {
+  background-color: #0dbc79;
+  color: #fff;
+}
+ul.pagination li a:hover:not(.active) {
+  background-color: #ddd;
 }

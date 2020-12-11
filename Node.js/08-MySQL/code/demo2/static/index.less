@@ -64,8 +64,13 @@ h6 {
   font-weight: normal;
 }
 
+html,body {
+  height: 100%;
+}
+
 .w {
   width: 1200px;
+  height: 100%;
   margin: 0 auto;
 }
 
@@ -85,7 +90,7 @@ body {
   color: #fff;
 }
 
-#app>ul>li {
+#app>ul.todos-list-wrap>li {
   font-size: 20px;
   line-height: 40px;
   transition: all 1s linear, transform .4s linear;
@@ -101,4 +106,28 @@ body {
   text-decoration: line-through;
   font-style: italic;
   color: #0dbc79;
+}
+
+ul.pagination {
+  display: flex;
+  margin-top: 30px;
+
+  li {
+    display: flex;
+    a {
+      color: #fff;
+      padding: 8px 16px;
+      transition: background-color .3s;
+      border: 1px solid #ddd;
+      margin: 0 4px;
+      &.active {
+        background-color: #0dbc79;
+        color: #fff;
+      }
+
+      &:hover:not(.active) {
+        background-color: #ddd;
+      }
+    }
+  }
 }
