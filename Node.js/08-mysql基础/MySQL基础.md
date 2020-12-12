@@ -22,10 +22,6 @@ MySQL 服务就是维护了若干个这样的库。
 
 ## SQL语句
 
-### 查询数据
-
-#### 排序查询
-
 #### 数量限制查询
 
 SELECT column_name,column_name FROM table_name [LIMIT N]
