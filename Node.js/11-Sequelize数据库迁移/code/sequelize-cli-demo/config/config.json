@@ -4,7 +4,10 @@
     "password": "root",
     "database": "c4az6_development",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "seederStorage": "sequelize",
+    "seederStoragePath": "userTestDataLog.json",
+    "seederStorageTableName": "userTestDataLog"
   },
   "home": {
     "username": "root",

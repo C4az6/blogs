@@ -137,7 +137,7 @@ sequelize-cli model:create --name User --attributes username:STRING
 
 
 
-## 撤销迁移
+## 撤销迁移 
 
 `db:migrate:undo`命令会撤销最近的一次迁移操作，会删除最近一次创建的表，会把`sequelizemeta`表里面的最近一次记录删除。
 
@@ -161,15 +161,173 @@ sequelize-cli db:migrate:undo 20201212030431-create-message.js
 
 ## 在表中添加字段
 
-如何在不影响表原有的情况下添加新的字段？
+如何在不影响表原有的情况下添加新的字段？例如我们给users表中增加一个age字段。
 
+创建迁移文件。
 
+```shell
+sequelize-cli migration:create --name UserAddAge
+```
 
+创建之后找到迁移脚本文件，然后在up和down中增加如下代码。
 
+```js
+'use strict';
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    /**
+     * Add altering commands here.
+     *
+     * Example:
+     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
+     */
+    await queryInterface.addColumn(
+      'users',
+      'age', {
+        type: Sequelize.TINYINT
+      }
+    )
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    /**
+     * Add reverting commands here.
+     *
+     * Example:
+     * await queryInterface.dropTable('users');
+     */
+    await queryInterface.removeColumn(
+      'users',
+      'age'
+    )
+  }
+};
+```
+
+addColumn这个API的第一个参数是你要添加列的表名，age是添加的字段，type是数据类型。
+
+removeColumn这个API是删除列。
+
+添加代码之后再执行`db:migrate`命令发现已经有了age字段了。
+
+![1607775853301](medias/1607775853301.png)
+
+如果我们撤销的话，也不会影响原有的users表结构，只会把users表中的age字段删除。
+
+撤销最近一次迁移：`db:migrate:undo`
 
 ## 种子文件seeder
 
+比如往表里面添加测试数据的时候我们就可以使用种子文件来实现。
 
+### 创建种子文件
+
+命令：`sequelize-cli seed:create --name userTest`
+
+![1607776268462](medias/1607776268462.png)
+
+
+
+### 添加测试数据
+
+```js
+'use strict';
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    /**
+     * Add seed commands here.
+     *
+     * Example:
+     * await queryInterface.bulkInsert('People', [{
+     *   name: 'John Doe',
+     *   isBetaMember: false
+     * }], {});
+    */
+    await queryInterface.bulkInsert('users', [
+      {
+        username: '张三',
+        age: 20
+      },
+      {
+        username: '李四',
+        age: 21
+      }
+    ])
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    /**
+     * Add commands to revert seed here.
+     *
+     * Example:
+     * await queryInterface.bulkDelete('People', null, {});
+     */
+    await queryInterface.bulkDelete('users', null, {});
+  }
+};
+```
+
+up函数里面的`bulkInsert`API第一个参数是要操作的表名，第二个参数是要插入的数据，是一个数组对象的格式。
+
+down函数里面的`bulkDelete`API是用来删除数据的，这里是将users表的数据清空。
+
+### 运行种子文件
+
+命令：`sequelize-cli db:seed:all`
+
+![1607776758906](medias/1607776758906.png)
+
+- 指定运行种子文件：`db:seed 种子文件`
+- 运行所有种子文件：`db:seed:all`
+
+### 撤销种子文件
+
+命令：`sequelize-cli db:seed:undo`
+
+- 指定撤销种子文件：`db:seed:undo 种子文件`
+- 撤销所有种子文件：`db:seed:undo:all`
+
+如果哪天测试数据被我玩坏了，用这个命令就可以很方便的还原。
+
+种子文件添加、撤销默认没有进行记录，因此我们需要手动添加记录，方便以后查看、溯源。
+
+官方文档告诉我们需要在`config/config.json`配置文件中添加配置。
+
+通过JSON的方式存储。
+
+```json
+"development": {
+    "username": "root",
+    "password": "root",
+    "database": "c4az6_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "seederStorage": "json",
+    "seederStoragePath": "userTestDataLog.json"
+}
+```
+
+
+
+通过数据库存储。
+
+```json
+  "development": {
+    "username": "root",
+    "password": "root",
+    "database": "c4az6_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "seederStorage": "sequelize",
+    "seederStorageTableName": "userTestDataLog"
+  },
+```
+
+![1607778464267](medias/1607778464267.png)
+
+> 注意：migration迁移的记录默认使用数据库存储，seeder种子文件生成的记录默认是没有存储的，需要手动在config/config.json中配置，要么使用JSON文件方式并且配置存储路径进行存储，要么使用数据库的方式存储。
 
 
 
