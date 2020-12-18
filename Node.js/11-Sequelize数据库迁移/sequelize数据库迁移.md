@@ -1,5 +1,7 @@
 ## 玩转Node.js-sequelize-cli
 
+数据库迁移就像git一样，我们可以使用Sequelize迁移来帮助我们跟踪数据库的更改，并在各个不同时期的数据库状态之间进行切换，使用Sequelize迁移，需要安装 sequelize-cli 工具。
+
 ## 安装sequelize-cli
 
 由于`sequelize-cli`依赖于`sequelize`包，sequelize又需要使用`mysql2`包来连接数据库，所以我们需要安装三个包。
