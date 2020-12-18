@@ -10,9 +10,9 @@ Sequelize 遵从 [语义版本控制](http://semver.org/)。 支持 Node v10 及
 
 中文文档：<https://www.sequelize.com.cn/>
 
-## 入门
 
-### 安装
+
+## 安装
 
 Sequelize 的使用可以通过 [npm](https://www.npmjs.com/package/sequelize) (或 [yarn](https://yarnpkg.com/package/sequelize)).
 
@@ -33,7 +33,7 @@ $ npm install --save tedious # Microsoft SQL Server
 
 因为我们要操作的是mysql，所以这个地方我们选择mysql2。
 
-### 连接到数据库
+## 连接到数据库
 
 ```js
 const Sequelize = require('sequelize');
@@ -43,7 +43,8 @@ const sequelize = new Sequelize({
   username: 'root',
   password: 'root',
   database: 'todos',
-  dialect: 'mysql'
+  dialect: 'mysql',
+  timezone: 'Asia/Shanghai' //当我们向数据库中写入时间的时候，默认会根据系统当前所在时区进行设置
 })
 // 测试连接
 sequelize.authenticate().then(_=>{
@@ -53,13 +54,17 @@ sequelize.authenticate().then(_=>{
 })
 ```
 
+new Sequelize options：
+	host：主机，默认localhost
+	port：端口，默认3306
+	dialect：数据库类型，默认mysql，必填
+	timezone：时区，影响数据库日期时间格式的值，格式：+08:00 或 字符串格式
 
 
-## 模型
 
+## 什么是模型？
 
-
-
+用来表述（描述）数据库表字段信息的对象，每一个模型对象表示数据库中的一个表，后续对数据库的操作都是通过对应的模型对象来完成的。
 
 
 
