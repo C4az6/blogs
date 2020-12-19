@@ -1,7 +1,11 @@
+const {
+  Op
+} = require('sequelize');
+
 (async function () {
   const Sequelize = require('sequelize');
 
-  // 创建Sequelize的实例对象并配置连接信息
+  // 配置sequelize数据库连接
   const sequelize = new Sequelize({
     host: '127.0.0.1',
     username: 'root',
@@ -10,32 +14,25 @@
     dialect: 'mysql'
   })
 
-  // 测试连接
+  // 测试数据库是否连接成功
   sequelize.authenticate().then(_ => {
-    console.log('[+] mysql connection succes!');
-  }).catch(err => {
-    console.log("[-] mysql connection error!", err);
+    console.log("[+] 数据库连接成功!");
+  }).catch(error => {
+    console.log("[-] 数据库连接失败!", error);
   })
 
-  /**
-   * 数据库连接完成以后，需要确定操作的表
-   * 使用ORM，不需要通过sql来操作表，而是通过对象来操作
-   * 给每一个要操作的表定义一个对象 - 模型 Model
-   */
+  // 创建数据模型
   const UserModel = sequelize.define('User', {
-    // 描述表中对应的字段信息
-    // 对象的key默认对应这表的column字段
     id: {
-      // 每一个字段的信息
-      type: Sequelize.INTEGER(10), // 整数类型
-      allowNull: false, // 不允许为空
-      primaryKey: true, // 设置为主键
-      autoIncrement: true // 允许自增
+      type: Sequelize.INTEGER(10),
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true
     },
     username: {
       type: Sequelize.STRING(255),
       allowNull: false,
-      defaultValue: 0
+      defaultValue: ""
     },
     age: {
       type: Sequelize.TINYINT,
@@ -43,16 +40,15 @@
       defaultValue: 0
     },
     gender: {
-      type: Sequelize.ENUM(['男', '女', '默认']), // 注意枚举类型为数组
+      type: Sequelize.ENUM(['男', '女', '默认']),
       allowNull: false,
       defaultValue: '男'
     }
   }, {
-    // 用来设置字段以外的其他信息
+    // 设置字段以外的信息
     timestamps: false,
     paranoid: false,
-    freezeTableName: true,
-    tableName: 'user',
+    freezeTableName: 'user',
     indexes: [{
       name: 'uname',
       fields: ['username']
@@ -62,75 +58,84 @@
     }]
   })
 
-  /**
-   * 模型类 -> 表
-   * 模型创建出来的对象 -> 表中某条记录
-   */
-  // let Kimoo = new UserModel();    //创建了一个User的记录
-
-  let Kimoo = UserModel.build({    //和上面的new是一样的
-      // 字段对应的值
-      username: 'Kimoo',
-      age: 30,
-      gender: '男'
-  });  
-
-  // 通过new或者build出来的对象不会立即同步到数据库中，需要使用后续的一些方法来同步
-
-  await Kimoo.save();
-
-  // let Kimoo = await UserModel.findByPk(6);
-  // console.log(Kimoo.dataValues);
-
-  // 修改
-  // let user = await UserModel.findById(1);
-  // console.log(user.dataValues);
-  // user.set('age', 39);
-  // await user.save();
-  // update == set + save
-  // await user.update({age: '32'});
-  // await user.update({username: 'alex'});
-  // user.destroy();
-
-
-
-  // 基于UserModel模型对象创建数据
-  // let Jack = UserModel.build({
-  //   username: 'Jack',
-  //   age: 20
-  // });
-  // await Jack.save();
-  // Jack.save();
-
-  // let Rachel = UserModel.build({
-  //   username: 'Rachel',
-  //   age: 27,
-  //   gender: '女'
-  // });
-  // await Rachel.save();
-
-  // 查找一个 返回一个Object
-  // let res = await UserModel.findOne({
-  //   where: {
-  //     username: 'Rachel'
-  //   }
-  // });
-  // console.log(res.dataValues);
-
-  // 查找全部 返回一个数组
-  // let res = await UserModel.findAll();
-  // console.log(res.length);
-  // res.forEach(item=>{
-  //   console.log(item.dataValues);
+  // 创建数据模型实例对象 c4az6
+  // let c4az6 = UserModel.build({
+  //   username: 'c4az6',
+  //   age: 20,
+  //   gender: '男'
   // })
 
-  // 带条件查询所有数据
+  // 获取属性
+  /* console.log(`
+  username: ${c4az6.get('username')}
+  age: ${c4az6.get('age')}
+  gender: ${c4az6.get('gender')}
+  `); */
+
+  // 设置属性
+  // let res = c4az6.set('age', 21);
+  // console.log(res.dataValues);
+
+  // 通过save方法同步数据到数据库中
+  // await c4az6.save();
+
+  // 更新字段数据
+  // let res = await UserModel.findById(17);
+  // console.log(res.dataValues);
+  // res.update({username: 'Alex'});
+
+  // let res2 = await UserModel.findById(18);
+  // res2.update({username: 'Elon', age: 40});
+  // console.log(res2.dataValues);
+  // // 销毁记录
+  // res2.destroy();
+
+  // 数据模型实例对象查询相关操作
+  // findById
+  // let user = await UserModel.findById(17);
+  // console.log(user.dataValues);
+
+  // findOne 返回一个对象
+  // let res = await UserModel.findOne({
+  //   where: {
+  //     id: 17
+  //   }
+  // })
+  // console.log(res.dataValues);
+
+  // 搜索或创建特定记录，如果不存在则创建，返回数组
+  // let res = await UserModel.findOrCreate({
+  //   where: {
+  //     id: 30,
+  //     username: 'test'
+  //   }
+  // })
+  // console.log(res[0].dataValues);
+
+  // 搜索多个记录，返回数据和总记录数, 返回数组
+  // 搜索年龄大于30的所有记录，这种对象嵌套对象的写法真恶心，一旦条件变多代码可读性会非常差
   // let res = await UserModel.findAll({
   //   where: {
-  //     // 单条件
-  //     // username: 'Jack'
+  //     age: {
+  //       [Op.gt]: 30
+  //     }
+  //   }
+  // })
+  // console.log(res.length);
+  // res.map(item=>{console.log(item.dataValues)});
 
-  //     // 多条件
+  // 与findAll一样，但是在返回所有数据的基础上添加了count统计总记录数的字段, 返回数组
+  // let res = await UserModel.findAndCountAll()
+  // console.log(res.count)
+  // res.rows.map(item=>{console.log(item.dataValues)});
+
+
+  // 过滤查询
+  // let res = await UserModel.findAll({
+  //   where: {
+  //     // 单条件过滤
+  //     // username: 'Alex',
+  //     // 多条件 要么年龄大于30，要么性别为女
   //     [Sequelize.Op.or]: [
   //       {
   //         age: {
@@ -143,43 +148,30 @@
   //     ]
   //   }
   // })
-  // res.map(item=>console.log(item.dataValues));
+  // res.map(item=>{console.log(item.dataValues)});
 
-  // 查询2条数据
+  // limit 限制记录查询
   // let res = await UserModel.findAll({
-  //   limit: 2
-  // })
-  // res.filter(item=>console.log(item.dataValues));
+  //   limit: 5
+  // });
+  // for(let i=0; i<res.length; i++) {
+  //   console.log(res[i].dataValues);
+  // }
 
-  // 查询偏移值为1的所有数据
+  // 分页查询 limit配合offset一起使用
   // let res = await UserModel.findAll({
-  //   offset: 1
+  //   limit: 5,
+  //   offset: 5
   // });
   // console.log(res);
-  // res.map(item=>{
-  //   console.log(item.dataValues);
-  // })
+  // res.some(item=>console.log(item.dataValues))
 
-  // 查询偏移值为1的2条数据
+  // 排序查询
+  // 年龄按照降序规则来排序
   // let res = await UserModel.findAll({
-  //   limit: 2,
-  //   offset: 1
+  //   order: [['age', 'desc']]
   // });
-  // res.map(item=>{
-  //   console.log(item.dataValues);
-  // })
-
-  // 根据降序规则查询所有记录数
-  // let res = await UserModel.findAll({
-  //   order: [
-  //     ['age', 'DESC']
-  //   ]
-  // });
-  // res.map(item=>{
-  //   console.log(item.dataValues);
-  // })
-
-  // console.log(res.map(r=>r.get('username')));
+  // res.forEach(item=>{console.log(item.dataValues)});
 
   // 返回总记录数
   // let res = await UserModel.count();
@@ -190,8 +182,9 @@
   //   limit: 2
   // });
   // console.log(res.count);
+  // res.rows.forEach(item=>{console.log(item.dataValues)});
 
-  // 计算gender字段为男的年龄的总和
+  // 计算gender字段为男的年龄总和
   // let res = await UserModel.sum('age', {
   //   where: {
   //     gender: '男'
@@ -227,13 +220,6 @@
     tableName: 'message'
   })
 
-
-  // 获取某条留言的所有信息，就是留言本身的数据 + 该留言的用户数据
-  // let data = {};
-
-  // let message = await MessageModel.findById(3);
-  // let user = await UserModel.findById(message.get('uid'));
-
   // Object.assign(data, {
   //   id: message.get('id'),
   //   uid: message.get('uid'),
@@ -244,11 +230,14 @@
   // });
   // console.log(data);
 
+  // MessageModel属于UserModel模型对象
   // MessageModel.belongsTo(UserModel, {
+  // // 关联外键
   //   foreignKey: 'uid'
   // });
 
   // let data2 = await MessageModel.findById(1, {
+  //  // 设置查询出来的数据包含UserModel数据
   //   include: [UserModel]
   // });
   // // console.log(data2);
@@ -261,6 +250,7 @@
 
   // 关联查询与预加载
   // 首先给关联的字段定义外键关系
+  // UserModel包含MessageModel对象，hasMany表示包含多个
   UserModel.hasMany(MessageModel, {
     foreignKey: 'uid'
   });
