@@ -1,55 +1,50 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Contents', {
+    return queryInterface.createTable('Comments', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id: {
+      content_id: {
         type: Sequelize.INTEGER,
         allowNull: false
       },
-      title: {
-        type: Sequelize.STRING(50),
+      user_id: {
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       content: {
         type: Sequelize.STRING(1000),
         allowNull: false
       },
-      like_count: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-      },
-      comment_count: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-      },
       createdAt: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.DATE
       }
     }, {
-      tableName: 'contents',
+      tableName: 'comments',
       charset: 'utf8mb4',
       collate: 'utf8mb4_bin'
     }).then(() => {
-      queryInterface.addIndex('contents', {
+      queryInterface.addIndex('comments', {
+        name: 'content_id',
+        fields: ['content_id']
+      });
+    }).then(() => {
+      queryInterface.addIndex('comments', {
         name: 'user_id',
         fields: ['user_id']
       });
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Contents');
+    return queryInterface.dropTable('Comments');
   }
 };

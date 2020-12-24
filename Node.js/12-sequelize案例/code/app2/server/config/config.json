@@ -1,23 +1,23 @@
 {
   "development": {
     "username": "root",
-    "password": "root",
-    "database": "database_development",
+    "password": null,
+    "database": "miaov_development",
     "host": "127.0.0.1",
     "dialect": "mysql",
     "timezone": "+08:00"
   },
   "test": {
     "username": "root",
-    "password": "root",
-    "database": "database_test",
+    "password": null,
+    "database": "miaov_test",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
-    "password": "root",
-    "database": "database_production",
+    "password": null,
+    "database": "miaov_production",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
