@@ -53,6 +53,10 @@ module.exports = (sequelize, Sequelize) => {
     Contents.hasMany(models.Comments, {
       foreignKey: 'content_id'
     });
+
+    Contents.hasMany(models.Likes, {
+      foreignKey: 'content_id'
+    });
   };
   return Contents;
 };
