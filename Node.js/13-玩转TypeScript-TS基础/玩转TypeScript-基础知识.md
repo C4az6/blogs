@@ -339,6 +339,8 @@ console.log(res);
 
 #### **函数重载**
 
+允许我们在TS中给函数传递多种对应类型的参数，前提是你已经定义好了参数的类型。
+
 ```typescript
 // function fn(x, y) {
 //   return x + y;
@@ -360,13 +362,13 @@ console.log(fn('alex', 'zhang'));   // alexzhang
 // console.log(fn('haha', 123));    // 直接报错
 ```
 
-#### **this问题**
+#### **this**
 
 > 注意：在TS中能不使用any类型就不使用，因为使用any类型TS就不会对其做类型检测了，就没有任何意义了。
 
 因为普通函数中的 this 具有执行期绑定的特性，所以在 ts 中的this 在有的时候会指向隐式的指向类型 - any（并不是所有，比如事件函数）。
 
-我们可以通过 --noImplicitThis 选项来指出 this 隐式 any 类型的错误。
+我们可以通过 --noImplicitThis 选项来解决 this 隐式 any 类型的错误。
 
 我们可以在函数参数中提供一个显示的 this 参数，this 参数是一个假的参数，它出现在参数列表的最前面。
 
@@ -748,7 +750,123 @@ console.log(s1.study());
 
 
 
+## Part3内容
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+## 总结
+
+**安装TS：**`npm install -g typescript`
+
+**安装ts-node编译器：**`npm install -g ts-node`
+
+**tsconfig.json作用是什么？**
+
+是用来对typescript编译器进行配置的，比如配置编译模式、模块化系统、输出目录、编译文件目录、包含文件的层级设置、空值检查、取消this默认指向any等等。。。
+
+
+
+**类型系统，常用有哪些类型？**
+
+格式：let a: 类型 = 123
+
+- string
+- number
+- boolean
+- array
+- tuple(元组)
+- enum
+
+
+
+**联合类型：**可以使用定义好的类型中任意一种类型进行赋值
+
+**类型推导：**typescript编译器会根据初始化变量或上下文来做类型推导，例如一个函数的2个参数都是定义为number类型的，那么返回值根据类型推导也是number类型，此时可以省略不写。
+
+
+
+**函数创建方式：**
+
+- 函数声明	`function fn1(x: number, y: number): number {return x+y};`
+- 函数表达式  `let fn2 = function(x: number, y: number):number {return x+y};`
+
+
+
+**完整函数写法：**
+
+`let fn2: (x:number, y:number) => number = function(x:number, y:number):number{return x+y};`
+
+**根据类型推断简写：**
+
+`let fn2: (x:number, y:number) => number = function(x,y){return x+y};`
+
+**可选参数写法：**使用?标识，如果没有返回值使用void代替
+
+`function fn3(x: number, y?:number):void{console.log(y)}`
+
+**参数默认值写法：**和javascript一样使用=号
+
+`function fn3(x: number, y=1): void {console.log(y)}` 
+
+**剩余参数写法:**
+
+`function fn3(x: number, ...args: string[]){ return x + " " + args.join(" "); }`
+
+**函数重载：**允许我们在TS中给函数传递多种对应类型的参数，前提是你已经定义好了参数的类型。
+
+`function fn(x: number, y: number);`
+
+`function fn(x: string, y: string);`
+
+`function fn(x: any, y: any): any {return x + y}`
+
+**TS函数中的this：**
+
+在ts中，函数默认的this指向any（并不是所有，比如事件函数除外），这会导致ts的类型系统不会检测this，因为ts不会检测any类型，所以我们需要配置`noImplicitThis：true`来解决this默认指向any的问题。
+
+在ts中函数的第一个this参数是用来设置this类型约束的，约定this指向的是什么类型。
+
+**类**
+
+类是对有相同特性对象的抽象。
+
+**修饰符**：
+
+作用是为了对成员属性和方法进行访问控制
+
+- public：ts中类的默认修饰符，允许类中的属性和方法公开访问
+- private：私有修饰符，只允许属性在类的内部进行访问
+- protected：受保护修饰符，只允许属性在类的内部和它的子类中访问
+- readonly：将属性设置为只读的， 只读属性必须在声明时或构造函数里被初始化
+
+**存取器：**
+
+截取对对象成员的访问，get/set，注意使用get/set定义的方法在使用的时候不需要加括号，当作属性使用即可，参考修改年龄代码。
+
+**静态成员：**
+
+不需要通过实例化的对象，直接通过类进行调用，适用于同时只能有一个对象在工作的情况，参考单例模式的Mysql连接代码。
+
+**继承：**
+
+类似ES6，使用extends关键字进行继承，如果子类没有重写构造函数，则直接使用父类的，如果重写了构造函数，则需要手动调用父类构造函数，使用`super()`关键字调用。
+
+**抽象类：**
+
+抽象类是对具有相同特性的类的抽象，当子类具有的相同的方法但有不同实现的时候，可以定义抽象类并定义抽象方法；
+
+参考学生学习方法和老师学习方法的代码。
+
+[源码在这里](https://github.com/C4az6/blogs/tree/master/Node.js/13-%E7%8E%A9%E8%BD%ACTypeScript-TS%E5%9F%BA%E7%A1%80)
