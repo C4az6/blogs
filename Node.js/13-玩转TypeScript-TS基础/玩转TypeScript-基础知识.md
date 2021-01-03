@@ -583,6 +583,169 @@ if (employee.fullName) {
 
 类的一般成员属性和方法都属于实例对象的，也就是原型链上的，静态成员属于类（也就是构造函数）的，静态成员不需要实例化对象，直接通过类即可调用。
 
+通过下面的demo彻底理解
+
+```typescript
+// 单例模式demo
+
+// class Mysql {
+//   // 成员属性声明, 默认public
+//   host: string;
+//   port: number;
+//   username: string;
+//   password: string;
+//   dbname: string;
+
+//   constructor(host = '127.0.0.1', port = 3306, username='root', password='', dbname='') {
+//     this.host = host;
+//     this.port = port;
+//     this.username = username;
+//     this.password = password;
+//     this.dbname = dbname;
+//   }
+
+//   // 类方法
+//   query(){console.log("query data...")}
+//   insert(){console.log("insert data...")}
+//   update(){console.log("update data...")}
+// }
+
+// /**
+//  * 创建一个Mysql对象，通过这个对象来操作数据库
+//  * 如果我们不加以限制的话，这个Mysql是可以new出来多个对象的
+//  * 每一个Mysql都会占用资源（内存）
+//  * 
+//  * 为了解决这个问题，我们需要对创建Mysql连接做限制，如果存在则直接使用已有的连接，不存在
+//  * 则创建。
+//  */
+
+//  let db = new Mysql();
+//  db.query();
+//  db.insert();
+
+//  let db1 = new Mysql();
+//  db1.query();
+//  db1.insert();
+
+
+/**
+ * 通过某种方式控制系统同时只有一个Mysql的对象在工作
+ */
+
+class Mysql {
+  // 静态属性，不需要通过new出来的对象，直接是通过Mysql类来访问
+  public static instance;
+  host: string;
+  port: number;
+  username: string;
+  password: string;
+  dbname: string;
+  private constructor(host = '127.0.0.1', port = 3306, username = 'root', password = '', dbname = '') {
+    this.host = host;
+    this.port = port;
+    this.username = username;
+    this.password = password;
+    this.dbname = dbname;
+  }
+  public static getInstance() {
+    if (!Mysql.instance) {
+      Mysql.instance = new Mysql();
+    }
+    return Mysql.instance;
+  }
+  query() { console.log("query data...") }
+  insert() { console.log("insert data...") }
+  update() { console.log("update data...") }
+}
+
+// let db = new Mysql();
+console.log(Mysql.instance);
+let db = Mysql.getInstance();
+db.query();
+console.log(Mysql.instance);
+db.insert();
+db.update();
+```
+
+#### 继承
+
+```typescript
+class Person {
+  // 在构造函数的参数中如果直接使用public等修饰符，则等同于同时创建了该属性
+  constructor(public username: string, public age:number) {
+    this.username = username;
+    this.age = age;
+  }
+}
+
+
+class Student extends Person {
+  /**
+   * 如果子类没有重写构造函数，则直接使用父类的
+   * 如果子类重写了构造函数，则需要手动调用父类构造函数
+   * super：关键字，表示父类
+   */
+   constructor(username: string, age:number, public gender: string) {
+    super(username, age);   // 执行父类构造函数
+    this.gender = gender
+   }
+}
+
+let s1 = new Student('alexander', 21, '男');
+console.log(s1);
+```
+
+#### 抽象类
+
+类是对具有相同特性的对象的抽象，抽象类是对具有相同特性的类的抽象，当派生类（子类）具有的相同的方法但有不同实现的时候，可以定义抽象类并定义抽象方法。
+
+**抽象方法只定义结构不定义实现，拥有抽象方法的类必须是抽象类，但是抽象类不一定拥有抽象方法，抽象类中也可以包含有具体细节的方法，abstract 关键字可以与 修饰符一起使用，继承了抽象类的子类必须实现了所有抽象方法才能被实例化，否则该子类也必须声明为抽象的。**
+
+第一次接触这个概念感觉有亿点点抽象，还是直接看代码。
+
+```typescript
+abstract class Person {   // 抽象类是不能实例化的
+  username: string;
+  constructor(username: string) {
+    this.username = username;
+  }
+
+  say() {
+    console.log("哈哈哈哈哈");
+  }
+
+  /* 
+    虽然子类都会有这样的特性，学习，但是子类的学习具体过程不一样，所以在父类确定不了study方法
+    的具体实现，父类只能有抽象的约定，接收什么参数，返回什么内容。
+    如果一个类中有抽象的方法了，那么这个类2也必须是抽象的。
+  */
+  abstract study():void // 抽象方法是没有具体代码的
+}
+
+class Student extends Person {
+  study() {
+    console.log("学生有学生的学习方法 - 需要老师教授")
+  }
+}
+
+class Teacher extends Person {
+  study() {
+    console.log("老师的学习方法 - 自学");
+  }
+}
+
+// 如果一个类继承了抽象的父类，就必须实现所有抽象方法，否则这个子类也必须是一个抽象类
+abstract class P extends Person {}
+
+let s1 = new Student('alex');
+console.log(s1.say());
+console.log(s1.study());
+```
+
+看完代码就理解了上面的话了。
+
+
+
 
 
 
