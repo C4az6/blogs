@@ -752,7 +752,173 @@ console.log(s1.study());
 
 ## Part3内容
 
-### 接口
+### 接口（interface）
+
+#### Hello，Interface
+
+接口为我们提供一种方式来定义某种结构，ts按照这种结构来检测数据。
+
+下面看一个基础的例子。
+
+```typescript
+/**
+ * interface
+ *  为我们提供一种方式来定义某种结构，ts按照这种结构来检测数据
+ * 
+ *  写法：
+ *      interface 接口名称 {
+ *        // ...接口规则
+ *      }
+ * 
+ * 
+ *  接口中定义的规则只有抽象描述，不能有具体的值或实现代码
+ * 
+ *  对象抽象 => 类  (把对象相似的部分提取出来通过这个类去描述对象)
+ *  类抽象 => 抽象类  (如果一个类中有一个抽象方法没有实现，那么这个类就是抽象类)
+ *  抽象类 => 接口    (如果一个抽象类中的所有成员都是抽象的，这个类就是接口)
+ */
+
+// 定义一个名为Options接口,可以把接口看成是一个对象，但是不完全是，有些细节不一样。
+interface Options {
+  // width: number = 1,   // 接口中的代码不能有值
+  width: number,
+  height: number
+}
+
+function fn(opts: Options) {
+  console.log(opts);
+}
+
+// fn();   // 报错，没有传入参数
+// fn({});   // 传入的参数类型不对，ts会按照接口中定义的数据去检测
+// fn({width: 300});   // 缺少height属性
+
+// 细节：类型检测只检测必须的属性是否存在，不会按照顺序进行检测，是无序的
+fn({ width: 200, height: 150 });    // 正确
+```
+
+ts中的interface接口是用来定义规则的，这个规则是给ts用来做数据检测的，上面的fn函数就是用了`Options`接口的规则来做数据检验，规则中定义了number类型的width属性和number类型的height属性，给fn函数传参的时候就得按照这种规则传，否则就报错。
+
+总结：
+
+1. ts中的接口是用来做类型检验的，必须严格按照接口中定义的规则来实现
+2. ts的类型检测只检测必须的属性是否存在，不会按照顺序进行检测，是无序的
+
+#### 可选参数和只读属性
+
+```typescript
+/**
+ * 如果规则中有些是可选的，那么通过 ? 标识。
+ * 只读属性通过 readonly 关键字标识
+ */
+
+interface Options {
+  width: number,
+  height: number,
+  color?: string,
+  readonly opcity: number
+}
+
+function fn(params: Options) {
+  console.log(params);
+  // params.opcity = 1.2    // 报错，只读属性不能重新赋值
+}
+
+fn({
+  width: 200,
+  height: 250,
+  opcity: 0.5
+})
+```
+
+总结：
+
+1. 可选参数通过`?`标识
+2. 只读属性通过`readonly`关键词标识
+
+#### 检测约束
+
+```typescript
+/* 
+  如果我们希望检测不要这么复杂
+      -如果我们希望某些时候，只要包含其中一些规则即可
+        - 通过可选参数 ? 方式实现
+        - 通过 as 断言   可以传少,不能传多
+        - 通过变量转换   可以传多,不能传少
+*/
+
+interface Options {
+  width: number,
+  height: number,
+  color: string
+}
+
+
+function fn(params: Options) {
+  console.log(params);
+}
+
+
+// fn({
+//   width: 200,
+//   height: 300
+// } as Options);    // 明确告诉ts我传入的就是Options，让ts绕开检测
+
+// 先赋值给一个变量，也可以绕开规则检测，原因是ts没有对obj这个变量做类型检测，但是这种方式只能传多不能传少
+let obj = {
+  height: 200,
+  width: 100,
+  color: 'red',
+  a: 1,
+  b: 2,
+  c: 3
+}
+
+fn(obj);
+```
+
+
+
+#### 索引签名
+
+```typescript
+/* 
+  希望规则是：一组由数字进行key命名的对象，比如下标为0,1,2,3,4这样的
+  我们可以使用索引签名
+    为数据定义一组具有某种特性的key的数据
+
+  索引key的类型只能是 number和string两种
+*/
+
+// 需求类似下面这种结构
+// interface Options {
+//   0: string,
+//   1: string,
+//   2: string
+// }
+
+
+// 定义了一组规则，key是number类型，使用中括号包裹[变量名: 类型], value是any任意类型
+interface Options {
+  // key是number，value是any类型的
+  // [attr: number]: any,
+
+  // key是string的话，会同时支持string和number类型
+  [attr: string]: any,
+  length: number
+}
+
+function fn(params: Options) {
+  console.log(params)
+}
+
+// 这种结构类似调用document.querySelectorAll('div')返回的NodeList结构
+fn({
+  0: 100,
+  a: 'haha',
+  length: 1
+})
+```
 
 
 
