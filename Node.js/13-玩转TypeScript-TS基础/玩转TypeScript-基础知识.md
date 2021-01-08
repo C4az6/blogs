@@ -1,3 +1,5 @@
+搞一搞TypeScript，做了一点笔记，奥里给，肝了兄弟们！
+
 ## Part1内容
 
 ### 安装typescript编译器
@@ -924,15 +926,215 @@ fn({
 
 #### 函数类型接口
 
+通过接口的形式来定义函数。
+
+一个简单的函数类型接口定义。
+
+```typescript
+/* 
+  这个接口描述的是一个包含fn,并且值的类型为函数的结构体，并不是描述函数结构;  
+  注意描述的是一个包含函数的对象结构
+*/
+
+interface Options {
+  fn: Function
+}
+
+let o: Options = {
+  fn: function () {console.log("I Am Function...")}
+}
+o.fn();   // I Am Function...
+```
+
+注意：我们不能把一个函数随便赋值给事件，因为事件回调函数的参数类型是Event，这是JS规定的。
+
+```typescript
+// 完整描述函数结构写法
+// let fn: (x: number, y: number) => number = function (x: number, y: number): number {
+//   return x + y
+// }
+
+/* 
+  定义一个事件函数，那么这个函数必须得有一定的规则；
+  我们不能随随便便的把一个函数赋值给事件
+*/
+
+// document.onclick = fn;    // 报错,因为fn函数定义的参数类型是number，而事件触发后的事件对象是Event类型
+
+function fn(x: Event) {
+  
+}
+document.onclick = fn;    // 正确写法
+```
+
+再来看一个函数类型接口的例子。
+
+```typescript
+// 我们可以使用 interface 来约定函数的结构
+// 定义的是函数类型接口,定义了一个x，y参数和返回值都为number类型的函数，根据这种规则进行检测
+interface IFn {
+  (x: number, y: number): number
+}
+
+let fn: IFn = function(x: number, y: number): number {return x + y};
+
+// 定义了一个接收一个MouseEvent类型参数的函数结构
+// 其实函数接口就是定义一种函数规则，然后后面复用这种规则
+interface MouseEventCallBack {
+  (e: MouseEvent): any
+}
+
+let fn: MouseEventCallBack = function(a: MouseEvent){
+
+}
+
+document.onclick = fn
+```
+
+定义一个名为`MouseEventCallBack`的接口，接收的参数名为e，类型是MouseEvent类型，返回值是any。
+
+fn函数按照`MouseEventCallBack`接口定义的规则做检测，函数中参数a是一个MouseEvent类型，因此ts检测通过，可以将fn函数赋值给事件。
+
+再来举一个例子。
+
+```typescript
+/* 
+  定义一个ResponseCallBack函数接口
+    函数的第一个参数名为res，Response类型，返回值是any类型的
+*/
+interface ResponseCallBack {
+  (res: Response): any
+}
+
+function todo(callback: ResponseCallBack) {
+  callback(new Response)
+}
+
+
+todo(function(res: Response){
+
+})
+```
+
+函数todo接收一个`callback`参数作为回调函数并且按照`ResponseCallBack`函数接口做规则检测，检测的规则是接收一个名为res的参数，类型是`Response`类型，返回值是any类型，调用todo函数，传入一个res参数名，类型为Response，然后调用callback并传入一个Response对象。
+
+> 部分代码需要拿到浏览器环境跑，直接用node跑可能会报错，例如这个Response。
+>
+
+再来看一个fetch的例子。
+
+```typescript
+// fetch返回的是一个Promise对象，then方法成功回调函数的参数是一个Response类型对象
+fetch('url').then( (a: string) => {
+  a.indexOf('');    // ts会检测到a不是一个string类型的，根本没有indexOf方法，这时就会报错
+})
+
+fetch('url').then((a: Response) => {
+  // a.indexOf('');    // Response类型没有这个indexOf方法，这里就会报错
+  return a.json();  // Response对象是有json方法的，所以检测通过，可以参考MDN文档的Response对象
+})
+```
+
+不要尝试去欺骗ts编译器，没有意义，ts并不会按照你写的`a:string`就将a按照string类型进行检测，因为then方法的回调函数参数就是一个Response对象，这是JS的规则。
+
+再来看一个ajax的例子。
+
+```typescript
+// 再看一个ajax的例子
+interface AjaxData {
+  code: number,
+  data: any
+}
+
+interface AjaxCallBack {
+  (res: AjaxData): any
+}
+
+// ajax函数的参数是一个callback回调函数，类型是AjaxCallBack，AjaxCallBack的参数类型是AjaxData类型
+function ajax(callback: AjaxCallBack){
+  callback({
+    code: 1,
+    data: [
+      {goods_name: 'IKBC C87红轴', goods_id: 1, goods_price: 299.99, goods_color: 'Black'},
+      {goods_name: 'IKBC C87青轴', goods_id: 2, goods_price: 289.99, goods_color: 'Green'},
+      {goods_name: 'IKBC C87黑轴', goods_id: 3, goods_price: 279.99, goods_color: 'White'},
+    ],
+    // message: '123'   // AjaxData没有定义message属性所以为报错
+  })
+
+
+  // 可以通过之前学习到的变量赋值的方式绕过检测
+  // let obj = {
+  //   code: 1,
+  //   data: [],
+  //   message: '123'
+  // }
+
+  // callback(obj)
+}
+
+ajax(function(x: AjaxData){
+  console.log(x);
+})
+
+// 总结：函数接口其实就是定义某种函数结构，接收的参数是什么类型，返回值是什么类型，做严格约束
+// typescript倒逼我们学习了更多javascript语言本身的东西，例如各种规则
+```
+
+总结：函数接口其实就是定义某种函数结构，接收的参数是什么类型，返回值是什么类型，做严格约束。
+
+第一次看这个的时候一脸懵逼=>万脸懵逼=>递归懵逼，只能怪自己太蠢，后面静下心来反复看，反复理解，反复写就明白了，`slow is fast`。
 
 
 
+#### 类类型接口
+
+```typescript
+/**
+ * 类接口
+ *      使用接口让某个类去符合某种契约
+ * 
+ * 类可以通过 implements 关键字去实现某个接口
+ *      - implements 某个接口的类必须实现这个接口中确定所有的内容
+ *      - 一个类只能有一个父类，但是可以implements多个接口，多个接口使用逗号分隔
+ */
+
+interface ISuper {
+    fly(): void;
+}
+
+class Man {
+
+    constructor(public name: string) {
+    }
+
+}
+
+class SuperMan extends Man implements ISuper {
+
+    fly() {
+        console.log('起飞');
+    }
+
+}
+
+class Cat {
+
+}
+
+class SuperCat extends Cat implements ISuper {
+    fly() {
+        console.log('起飞');
+    }
+}
+
+let kimoo = new SuperMan('Kimoo');
+// kimoo
+```
 
 
 
-
-
-
+#### 封装http案例
 
 
 

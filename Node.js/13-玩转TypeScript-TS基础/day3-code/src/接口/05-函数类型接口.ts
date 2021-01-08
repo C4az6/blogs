@@ -1,15 +1,16 @@
 /* 
-  这个接口描述的是一个包含fn并且值的类型为函数的结构体，并不是描述函数结构;  
+  这个接口描述的是一个包含fn,并且值的类型为函数的结构体，并不是描述函数结构;  
   注意描述的是一个包含函数的对象结构
 */
 
-// interface Options {
-//   fn: Function
-// }
+/* interface Options {
+  fn: Function
+}
 
-// let o: Options = {
-//   fn: function () { }
-// }
+let o: Options = {
+  fn: function () {console.log("I Am Function...")}
+}
+o.fn();   // I Am Function... */
 
 // 完整描述函数结构写法
 // let fn: (x: number, y: number) => number = function (x: number, y: number): number {
@@ -21,17 +22,17 @@
   我们不能随随便便的把一个函数赋值给事件
 */
 
-// document.onclick = fn;    // 报错,因为fn函数定义的参数类型是number，而事件触发后的事件对象是Event类型
+/* document.onclick = fn;    // 报错,因为fn函数定义的参数类型是number，而事件触发后的事件对象是Event类型
 
-// function fn(x: Event) {
+function fn(x: Event) {
   
-// }
-// document.onclick = fn;    // 正确写法
+}
+document.onclick = fn;    // 正确写法 */
 
 
 
 // 我们可以使用 interface 来约定函数的结构
-// 定义的是函数接口,定义了一个x，y参数和返回值都为number类型的函数，根据这种规则进行检测
+// 定义的是函数类型接口,定义了一个x，y参数和返回值都为number类型的函数，根据这种规则进行检测
 /* interface IFn {
   (x: number, y: number): number
 }
@@ -40,7 +41,7 @@ let fn: IFn = function(x: number, y: number): number {return x + y}; */
 
 
 // 定义了一个接收一个MouseEvent类型参数的函数结构
-//其实函数接口就是定义一种函数规则，然后后面复用这种规则
+// 其实函数接口就是定义一种函数规则，然后后面复用这种规则
 /* interface MouseEventCallBack {
   (e: MouseEvent): any
 }
@@ -67,7 +68,7 @@ function todo(callback: ResponseCallBack) {
 
 
 todo(function(res: Response){
-
+  return 'i am callback...'
 }) */
 
 
@@ -75,9 +76,9 @@ todo(function(res: Response){
 // fetch返回的是一个Promise对象，then方法成功回调函数的参数是一个Response类型对象
 /* fetch('url').then( (a: string) => {
   a.indexOf('');    // ts会检测到a不是一个string类型的，根本没有indexOf方法，这时就会报错
-}) */
+})
 
-/* fetch('url').then((a: Response) => {
+fetch('url').then((a: Response) => {
   // a.indexOf('');    // Response类型没有这个indexOf方法，这里就会报错
   return a.json();  // Response对象是有json方法的，所以检测通过，可以参考MDN文档的Response对象
 }) */
