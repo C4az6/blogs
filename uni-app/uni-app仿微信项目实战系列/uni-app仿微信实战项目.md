@@ -65,6 +65,14 @@ uni-app是逻辑和渲染分离的。渲染层，在app端提供了两套排版�
 
 
 
+## 补充知识
+
+### 1.image组件的mode属性讲解
+
+
+
+
+
 ## 1.环境搭建和项目创建
 
 需要安装的插件：
@@ -1724,12 +1732,6 @@ mounted() {
 
 ### 7.4 聊天气泡组件开发
 
-为什么有些时候使用`div`而不是`view`标签？
-
-兼容性问题？
-
-
-
 uni-app中`block`和`template`的区别：
 
 > `uni-app` 支持在 template 模板中嵌套 `<template/>` 和 `<block/>`，用来进行 [列表渲染](https://uniapp.dcloud.io/vue-basics?id=%e5%88%97%e8%a1%a8%e6%b8%b2%e6%9f%93) 和 [条件渲染](https://uniapp.dcloud.io/vue-basics?id=%e6%9d%a1%e4%bb%b6%e6%b8%b2%e6%9f%93)。
@@ -1928,7 +1930,314 @@ export default {
 
 ### 7.5 聊天时间人性化处理
 
+思路：
 
+判断信息和上一条信息的时间差，如果时间差小于一个数则不显示时间，否则显示格式化后的时间。
+
+[时间戳在线转换工具](https://tool.lu/timestamp/)
+
+实现效果：
+
+![1616444990681](medias/1616444990681.png)
+
+该功能依赖`/common/free-lib/time.js`库，具体的实现逻辑参考commit。
+
+
+
+### 7.6 [*]长按信息弹出操作菜单
+
+思路：
+
+1. 实现弹出层效果
+2. 优化弹出层的边界问题（额外计算并减去tabbar的高度）
+3. 优化长按事件（如果对非用户的聊天内容进行长按应该隐藏`撤回`功能）
+
+存在的BUG：
+
+> 希望实现的效果：
+>
+> 用户长按自己的聊天信息弹出层的菜单高度正常，安全边界也正常。
+>
+> 用户长按他人的聊天信息弹出层的**菜单高度跟随弹出层的菜单数量进行变化**，**安全边界**也正常。（现在这里有BUG，这2个问题都不正常。）
+
+以后抽时间再解决这个BUG！
+
+
+
+### 7.7 消息撤回功能实现
+
+```html
+<!-- 撤回消息 -->
+<view 
+      v-if="item.isRemove"
+      ref="isRemove"
+      class="flex align-center justify-center pb-4 pt-2 chat-animate"
+      >
+    <text class="font-sm text-light-muted">你撤回了一条信息</text>
+</view>
+```
+
+给`chat/chat.nvue`的popup弹出层绑定事件
+
+```html
+<!-- 弹出层 -->
+<free-popup ref="popupRef" :bodyWidth="200" :bodyHeight="getMenusHeight" :tabbarHeight="105">
+    <view class="flex flex-column" style="width: 240rpx;" :style="setMenusStyle">
+        <view class="flex-1 flex align-center" hover-class="bg-light" v-for="(item,index) in setMenusList" :key="index" @click="handleMenuItemClick(item.event)">
+            <text class="font-md p-3">{{item.name}}</text>
+        </view>
+    </view>
+</free-popup>
+```
+
+
+
+```js
+// 监听聊天信息弹出菜单点击事件
+handleMenuItemClick(e) {
+    switch(e) {
+        case 'removeChatItem':  // 撤回消息事件
+            // 拿到当前操作的信息对象
+            if(this.propIndex > -1) {
+                this.list[this.propIndex].isRemove = true
+            }
+            break;
+        default:
+            break;
+    }
+    // 关闭弹出菜单
+    this.$refs.popupRef.hide()
+},
+```
+
+
+
+通过`watch`监听`isRemove`字段变化来增加动画效果
+
+```js
+watch: {
+    // 监听是否撤回消息
+    'item.isRemove': {
+        handler(newValue, oldValue) {
+            // #ifdef APP-NVUE
+            if(newValue) {
+                const animation = weex.requireModule('animation')
+                this.$nextTick(()=>{
+                    animation.transition(this.$refs.isRemove, {
+                        styles: {
+                            opacity: 1
+                        },
+                        duration: 500,
+                        timingFunction: 'ease',
+                    },function(){
+                        console.log("动画执行结束!")
+                    })
+                })
+            }
+            // #endif
+        },
+            immediate: true
+    }
+},
+```
+
+
+
+CSS代码
+
+```css
+.chat-animate {
+    /* #ifdef APP-NVUE */
+    opacity: 0;
+    /* #endif */
+}
+```
+
+
+
+### 7.8 [*]解决键盘顶起窗口问题
+
+解决思路：
+
+1. 取消`textarea`键盘上推功能
+
+   在 textarea 添加`:adjust-position="false"`属性即可。
+
+2. 监听键盘高度变化，动态设置输入框高度
+
+   ```js
+   mounted() {
+       // 监听键盘高度的动态变化
+       uni.onKeyboardHeightChange(res => {
+           this.KeyboardHeight = res.height
+       })
+   }
+   ```
+
+3. 动态设置滑动内容区域的高度
+
+   `html代码`
+
+   ```html
+   <!-- 聊天内容区域 -->
+   <scroll-view scroll-y class="position-fixed left-0 right-0 px-3" :style="setBodyBottom">
+       <!-- 聊天信息列表组件 -->
+       <template v-for="(item, index) in list" >
+           <free-chat-item :item="item" :index="index" :pretime="index>0?list[index-1].create_time:0" @long="handleLongPress"></free-chat-item>
+       </template>
+   </scroll-view>
+   ```
+
+   
+
+   `js代码`
+
+   ```js
+   // 设置内容区域高度的计算属性
+   setBodyBottom () {
+       return `bottom: ${this.KeyboardHeight + uni.upx2px(105)}px;top: ${this.navBarHeight}px;`
+   },
+   ```
+
+4. 取消内容区域的滚动条
+
+   给 scroll-view 标签添加 `:show-scrollbar="false"`属性即可。
+
+> BUG：弹出键盘后，用户长按聊天信息，显示弹出层后弹出层的边界会失效，可能是弹出层的边界没有随着内容区域高度的变化而变化，后续再花时间研究优化。
+
+
+
+### 7.9 聊天内容滚动到底部
+
+键盘弹起的时候，页面内容默认不会自动滚动到底部，这样用户需要手动将内容滑动到底部才能看到最后一条信息，然后做出对应的回复，这样的体验不是很好，怎么优化呢？这里的思路就是通过 `scrollToElement` API实现。
+
+这个API存在兼容性，只支持 weex 渲染的nvue模式，具体参考[官方文档](https://weex.apache.org/zh/docs/modules/dom.html#scrolltoelement)
+
+```js
+<script>
+	// #ifdef APP-PLUS-NVUE
+	const dom = weex.requireModule('dom')
+	// #endif
+	export default {
+		mounted() {
+			// 监听键盘高度变化
+			uni.onKeyboardHeightChange(res => {
+			  this.KeyboardHeight = res.height 
+			  if (this.KeyboardHeight > 0) {
+			  	this.pageToBottom()
+			  }
+			})
+		},
+		methods: {
+			// 回到底部
+			pageToBottom(){
+				let chatItem = this.$refs.chatItem
+				let lastIndex = chatItem.length > 0 ? chatItem.length - 1 : 0
+				if (chatItem[lastIndex]) {
+					dom.scrollToElement(chatItem[lastIndex],{})
+				}
+			}
+		}
+	}
+</script>
+```
+
+
+
+### 7.10 发送文字功能实现
+
+思路：
+
+1、发送按钮绑定点击事件
+2、构建数据对象
+3、判断是否是text文本数据类型
+4、验证通过后将数据push到聊天信息列表中
+5、清空输入框
+6、滚动到最底部
+
+`chat/chat.nvue`
+
+```js
+// 发送聊天信息
+send(type) {
+    let chatObj = {
+        avatar: "/static/images/demo/demo5.jpg",
+        user_id: 1,
+        nickname: "伤心的瘦子",
+        type: "",	// image、audio、video
+        data: this.text,
+        create_time: Date.now(),
+        isRemove: false
+    }
+    switch(type) {
+        case 'text':
+            chatObj.type = type
+            this.text = ""
+            break
+    }
+    this.list.push(chatObj)
+    this.$nextTick(_=>{
+        this.setPageToBottom()
+    })
+}
+```
+
+
+
+### 7.11 底部菜单开发
+
+思路：
+
+1. 编写底部拓展菜单的弹出层
+
+2. 开启拓展菜单弹出层的时候需要将`KeyboardHeight`值重新赋值，单位是`px`，因此需要使用`uni.upx2px`进行转换，关闭弹出层的时候重置`KeyboardHeight`的值
+
+3. 在弹出层内添加swiper组件，遍历列表数据动态生成swiper中的菜单内容
+
+4. 解决底部操作条弹出的键盘与拓展菜单冲突的问题
+
+   问题细节：
+
+   1. 当底部输入框获取焦点弹出键盘后，此时点击打开拓展菜单会有BUG，拓展菜单被键盘覆盖
+   2. 点击拓展菜单按钮或点击蒙版关闭拓展菜单后键盘没有自动关闭
+   3. 在没有弹起键盘的情况下打开拓展菜单，然后点击输入框希望弹起键盘，此时却直接关闭了拓展菜单
+
+   
+
+   针对上面的问题，这里引入`模式`的概念，用户不可能同时输入文字、语音、表情包、拓展菜单中的功能信息，我们需要通过输入模式来区分用户每次要输入的信息类型，一次只能输入一种模式，以此来实现合理切换功能。
+
+   该业务支持以下模式：
+
+   1. text 输入文本
+   2. emoticon 表情
+   3. action 操作扩展菜单
+   4. audio 音频
+
+   默认的模式为`text`，打开拓展菜单的时候将模式改变为`action`模式；
+
+   由于监听键盘高度变化的`uni.onKeyboardHeightChange`API是异步的，因此我们有时候修改了值之后无法监听到，就会导致底部的输入框导航栏被遮挡，解决方法就是加一个判断。
+
+   `mounted时的代码`
+
+   ```js
+   // 监听键盘高度的动态变化
+   uni.onKeyboardHeightChange(res => {
+       console.log("键盘高度发生变化：", res.height)
+       if(this.mode!=='action') {
+           // 不为操作拓展菜单模式的时候才动态赋值
+           this.KeyboardHeight = res.height
+       }
+       if(res.height>0) {
+           this.$nextTick(_=>{
+               this.setPageToBottom()
+           })
+       }
+   })
+   ```
+
+   这个时候又会出现一个新问题，用户点击输入框 => 弹起键盘 => 打开拓展菜单 => 关闭拓展菜单 => 再次点击输入框就会发现底部输入框导航栏又不见了。。。
+
+5. 
 
 
 
