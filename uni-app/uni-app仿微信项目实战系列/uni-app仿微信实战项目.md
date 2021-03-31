@@ -2215,7 +2215,23 @@ send(type) {
 
    默认的模式为`text`，打开拓展菜单的时候将模式改变为`action`模式；
 
-   由于监听键盘高度变化的`uni.onKeyboardHeightChange`API是异步的，因此我们有时候修改了值之后无法监听到，就会导致底部的输入框导航栏被遮挡，解决方法就是加一个判断。
+   由于监听键盘高度变化的`uni.onKeyboardHeightChange`API是异步执行的，当你使用`uni.hideKeyboard`API收起键盘的时候，此时会触发`uni.onKeyboardHeightChange`API，正因为这个API是异步执行的，所以会优先执行`this.KeyboardHeight = uni.upx2px(580)`，然后会执行`this.KeyboardHeight = res.height`，此时res.height为0，因此底部输入框状态栏出不来，因此这里要加判断了。
+
+   `methods的代码`
+
+   ```js
+   // 底部拓展菜单展示
+   handleExtandMenuShow() {
+       this.mode = 'action',  // 修改模式为操作拓展菜单的模式
+       // 收起键盘,此时键盘高度为0
+       uni.hideKeyboard()
+       // 显示拓展菜单
+       this.$refs.extendMenuRef.show()
+       this.KeyboardHeight = uni.upx2px(580)
+   },
+   ```
+
+   
 
    `mounted时的代码`
 
@@ -2237,7 +2253,53 @@ send(type) {
 
    这个时候又会出现一个新问题，用户点击输入框 => 弹起键盘 => 打开拓展菜单 => 关闭拓展菜单 => 再次点击输入框就会发现底部输入框导航栏又不见了。。。
 
-5. 
+   解决方法：
+
+   1. 关闭底部拓展菜单的时候让`textarea`输入框失焦
+   2. 点击`textarea`的时候配置获取焦点事件`@focus="mode='text'"`
+
+   其他的几个bug直接看commit找解决方法。
+
+5. nvue给`scroll-view`绑定点击事件后无效，微信小程序却可以，很奇怪。。。
+
+   解决的思路就是在底部输入框导航栏的同层级前面放一层div并且设置固定定位，背景颜色透明，
+
+   然后绑定点击事件，点击事件触发后关闭底部的拓展菜单。
+
+   ```html
+   <!-- 针对nvue环境下的蒙版层 -->
+   <!-- #ifdef APP-NVUE -->
+   <div 
+        v-if="mode === 'action'" 
+        class="position-fixed top-0 left-0 right-0 bottom-0" 
+        @click="clickPage"
+        :style="'bottom:'+maskBottom+'px'"
+        ></div>
+   <!-- #endif -->
+   ```
+
+   
+
+   ```js
+   computed: {
+       // 计算蒙版距离底部的位置
+       maskBottom() {
+           return this.KeyboardHeight + uni.upx2px(105)
+       },
+   }
+   ```
+
+   > 由于nvue使用的原生渲染引擎是weex，又因为weex的渲染是从上到下的，后面定位的元素会覆盖前面的元素，v-if条件生效的时候，元素会被插入底部，此时会覆盖输入框导航条部分的`position: fixed`，因此就造成了点击拓展菜单的时候看不见底部输入框部分了，此时就需要动态设置高度了。
+
+   这个聊天页面底部输入框部分的交互是有点难度的，逻辑比较多，要注意的细节也比较多，需要细心思考，多看commit的代码理解吧。
+
+6. 表情包开发
+
+   
+
+7. 
+
+
 
 
 
