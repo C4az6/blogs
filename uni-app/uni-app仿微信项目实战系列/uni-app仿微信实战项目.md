@@ -2295,9 +2295,245 @@ send(type) {
 
 6. 表情包开发
 
+   核心代码
+
+   ```js
+   // 初始化表情包数据列表函数
+   __init() {
+       // 一共有20张表情包，因此total = 20
+       var total = 20
+       // 每个swiper-item里面有8张表情包，page为计算出来的总页数,此处为3
+       var page = Math.ceil(total / 8)
+       var arr = []
+       for (var i = 0; i < page; i++) {
+           var start = i * 8
+           arr[i] = []
+           for (var j = 0; j < 8; j++) {
+               var no = start + j
+               console.log(no)
+               if ((no+1) > total) {
+                   break;
+               }
+               arr[i].push({
+                   name: '表情' + no,
+                   icon: `/static/images/emoticon/5497/${no}.gif`,
+                   event: ""
+               })
+           }
+       }
+       this.emoticonList = arr
+   },
+   ```
+
+   > arr数组的长度其实就是表情包的页数，第一个for循环就是用来生成表情包的页数的，第二个循环用来给表情包每页加入数据的。
+
    
 
-7. 
+   发送表情包功能开发流程：
+
+   1、给每项拓展菜单项绑定点击事件，传递数据，监听事件，通过`switch`做函数分发
+
+   ![1617314352178](medias/1617314352178.png)
+
+   ![1617314435982](medias/1617314435982.png)
+
+   ![1617314852238](medias/1617314852238.png)
+
+   2、在`free-chat-item.vue`子组件中进行修改结构和样式
+
+   先看一下传递过来的item表情包数据长是什么样子。
+
+   ![1617315149684](medias/1617315149684.png)
+
+   首先得在组件中增加一个显示表情包的`image`标签。
+
+   ![1617315384687](medias/1617315384687.png)
+
+   ![1617315627322](medias/1617315627322.png)
+
+   3、通过计算属性处理气泡样式
+
+   ![1617315917558](medias/1617315917558.png)
+
+   此时就搞定了。
+
+7. 发送图片功能
+
+   关键就是调用`uni.chooseImage`API。
+
+   点击拓展菜单的相册，调用API让用户打开相册选择图片，然后渲染到页面中。
+
+   ![1617333083394](medias/1617333083394.png)
+
+   在组件中修改条件判断
+
+   ![1617333123639](medias/1617333123639.png)
+
+8. 预览图片保存相册功能
+
+   给图片标签绑定点击事件，点击后将该图像数据传递给父组件，父组件中通过`uni.previewImage`打开图片预览功能。
+
+   ![1617345874392](medias/1617345874392.png)
+
+   ![1617345894089](medias/1617345894089.png)
+
+   ![1617345962044](medias/1617345962044.png)
+
+   ![1617345982388](medias/1617345982388.png)
+
+9. 封装图片加载组件
+
+   解决nvue模式下`max-width、max-height`CSS属性不生效的问题，通过JavaScript动态计算最大宽度和高度。
+
+   `free-image.vue`
+
+   ```html
+   <template>
+   	<image 
+   		:class="imageClass" 
+   		:src="src" 
+   		:style="setImageStyle"
+   		@click="$emit('click')"
+   		@load="loadImage"
+   	></image>
+   </template>
+   
+   <script>
+   export default {
+     name: 'FreeImage',
+     components: {},
+     props: {
+   		// 图片路径地址
+   		src: {
+   			type: String,
+   			required: true
+   		},
+   		// 样式类名
+   		imageClass: {
+   			type: String,
+   			required: true
+   		},
+   		// 最大宽度
+   		maxWidth: {
+   			type: [Number, String],
+   			default: 500
+   		},
+   		// 最大高度
+   		maxHeight: {
+   			type: [Number, String],
+   			default: 300
+   		}
+   	},
+     data () {
+   		return {
+   			w: 100,
+   			h: 100
+   		}
+     },
+     computed: {
+   		// 计算图片的高度和宽度样式
+   		setImageStyle() {
+   			return `width: ${this.w}px; height: ${this.h}px;`
+   		}
+   	},
+     watch: {},
+     created () {
+   	},
+     mounted () {},
+     methods: {
+   		loadImage(e) {
+   			console.log("loadImage", e)
+   			let w = e.detail.width
+   			let h = e.detail.height
+   			
+   			// 最大高度作为基准的写法
+   			let maxW = uni.upx2px(this.maxWidth)
+   			let maxH = uni.upx2px(this.maxHeight)
+   			if (h <= maxH) {
+   				this.h = h
+   				this.w = w <= maxW ? w : maxW
+   				return
+   			}
+   			this.h = maxH
+   			// 计算等比例的最大宽度，赋值给w2变量
+   			let w2 = maxH * (w / h)
+   			// 如果等比例最大宽度小于之前定义的最大宽度则使用w2，否则使用之前定义的最大宽度
+   			this.w = w2 <= maxW ? w2 : maxW
+   		}
+   	}
+   }
+   </script>
+   
+   <style scoped lang="less"></style>
+   ```
+
+   
+
+### 7.12 音频功能开发
+
+> 这块的功能比较复杂，多思考吧。
+
+#### 7.12.1 语音播放功能开发
+
+添加音频标签结构
+
+```html
+<view v-else-if="item.type === 'audio'" class="flex align-center" @click="openAudio">
+    <text class="font">300'</text>
+</view>
+```
+
+```js
+// 播放音频函数
+openAudio() {
+    // 创建音频对象
+    const innerAudioContext = uni.createInnerAudioContext();
+    // 设置音频播放地址
+    innerAudioContext.src = this.item.data;
+    // 播放音频
+    innerAudioContext.play()
+}
+```
+
+解决返回页面不销毁音频的Bug。
+
+![1617452448810](medias/1617452448810.png)
+
+
+
+#### 7.12.2 多语音播放切换功能开发
+
+**在nvue中使用vuex。**
+
+多语音播放切换功能的开发需要使用到Vuex，因此我们需要在nvue项目中引入Vuex，下面是引入步骤：
+
+在项目根目录创建`store`文件夹，然后在`store`文件夹中创建`index.js`文件，然后在`main.js`中引入并注册。
+
+![1617510615040](medias/1617510615040.png)
+
+![1617510647735](medias/1617510647735.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
