@@ -23,6 +23,20 @@ module.exports = appInfo => {
     // myAppName: 'egg',
   };
 
+  config.security = {
+    // 关闭 csrf
+    csrf: {
+      enable: false,
+    },
+     // 跨域白名单
+    domainWhiteList: [],
+  };
+  // 允许跨域的方法
+  config.cors = {
+    origin: '*',
+    allowMethods: 'GET, PUT, POST, DELETE, PATCH'
+  };
+  
   return {
     ...config,
     ...userConfig,

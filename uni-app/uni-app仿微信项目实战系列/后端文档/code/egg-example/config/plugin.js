@@ -6,4 +6,9 @@ module.exports = {
   // static: {
   //   enable: true,
   // }
+  // 开启cors
+  cors: {
+    enable: true,
+    package: 'egg-cors',
+  }
 };
