@@ -10,5 +10,10 @@ module.exports = {
   cors: {
     enable: true,
     package: 'egg-cors',
+  },
+  // 引入egg-sequelize插件
+  sequelize: {
+    enable: true,
+    package: 'egg-sequelize'
   }
 };
