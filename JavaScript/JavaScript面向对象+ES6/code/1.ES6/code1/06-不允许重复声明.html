@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 1.let不允许在相同作用域内，重复声明同一个变量。
+    // function fn(){
+    //   // 报错 Identifier 'a' has already been declared
+    //   let a = 10;
+    //   let a = 20;
+    // }
+
+
+    // 2.不能在函数内部重新声明参数
+    // function func(arg) {
+    //   let arg = '呵呵';    // 报错 Identifier 'arg' has already been declared
+    // }
+    // func(100);
+
+    // function func(arg) {
+    //   {
+    //     let arg;    // 不报错,因为这个arg变量声明在快级作用域中的,是一个独立的作用域，和arg没有关系
+    //     console.log(arg)    // undefined
+    //   }
+    // }
+    // func()
+  </script>
+</body>
+
+</html>

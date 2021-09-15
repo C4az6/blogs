@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    function Cat(age, weight, color) {
+      // 年龄
+      this.age = age;
+      // 体重
+      this.weight = weight;
+      // 毛色
+      this.color = color;
+    }
+
+    // 构造函数里面没有 new，就当作普通函数执行
+    // 当作普通函数执行的时候，里面this指向window对象
+    // Cat('2岁', '10KG', 'pink');
+    // console.log(window)
+
+    // 创建一个猫对象
+    var c1 = {
+      name: '猫'
+    }
+
+    /* 
+      语法知识点：
+        函数名称.call(对象,函数参数1，函数参数2,....)
+        call的第一个函数就是调用时候this指向的那个对象
+    */
+    Cat.call(c1, "2岁", "5KG", "red");
+    /* 
+     call 参数传递关系
+       将Cat函数的this指向c1对象
+       "2岁" 传给age
+       "5KG" 传给weight
+       "red" 传给color
+    */
+
+    // 控制台输出c1，发现c1身上增加了很多属性
+    console.log(c1);
+  </script>
+</body>
+
+</html>

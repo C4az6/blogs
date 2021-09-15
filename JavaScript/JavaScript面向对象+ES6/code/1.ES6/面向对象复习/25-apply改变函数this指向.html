@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 任何函数被调用的时候，内部都会有 this
+    // !!!!! call 主要就是在调用函数的时候， 改变 【函数内部this的指向】
+
+    // Cat 构造函数
+    function Cat(age, weight, color) {
+      // 年龄
+      this.age = age;
+      // 体重
+      this.weight = weight;
+      // 毛色
+      this.color = color;
+    }
+
+    // 创建一个 猫 对象
+    var c1 = {
+      name: '猫'
+    };
+
+    /* 
+      apply 只允许传入2个参数：
+        apply 第一个参数功能和 call 一样
+        apply 第二个参数必须是一个数组集合
+    */
+    // Cat.call(c1, 4, "5kg", '金色');
+    Cat.apply(c1, [4, '5kg', '金色'])
+
+    console.log(c1);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src="./js/map.js"></script>
+  <script src="./js/food.js"></script>
+  <script src="./js/snake.js"></script>
+  <script>
+    // 实例化游戏地图对象
+    var map = new Map();
+
+    // 实例化游戏中的食物对象
+    var food = new Food();
+
+    // 实例化贪吃蛇对象
+    var snake = new Snake();
+    // 调用蛇移动的方法
+    setInterval(function(){
+      snake.move();
+    }, 1000)
+    console.log(snake)
+  </script>
+</body>
+
+</html>

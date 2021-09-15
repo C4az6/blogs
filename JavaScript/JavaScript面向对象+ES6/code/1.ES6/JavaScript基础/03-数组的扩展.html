@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <ul>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+  </ul>
+  <script>
+    /* 数组的扩展 */
+
+    /* Array.from() */
+    // var list = document.querySelectorAll('li');
+    // console.log(list);    // NodeList伪数组
+    // console.log(Array.isArray(list));   // false 这个list不是Array构造函数的实例对象
+    // var list2 = Array.from(list);   // Array.from()方法从一个类似数组或可迭代对象创建一个新的，浅拷贝的数组实例
+    // console.log(list2);
+    // console.log(Array.isArray(list2));  // true，因为已经转换成数组了，原型对象上有Array构造函数的方法
+    
+    /* Array.of() */
+    // let array = Array.of(3,3,3,3,3,'123', true);
+    // console.log(array);   // Array.of()方法用来创建一个数组
+
+
+    /* 
+      find()
+        返回符合条件的元素，如果都不符合则返回undefined
+      findIndex()
+        返回符合条件的元素的下标/索引，如果都不符合则返回-1
+     */
+
+
+    // var array = [1,2,3,4,5];
+    // console.log(array);
+    // let res = array.find(function(item){
+    //   return item < 2;    // 1
+    //   // return item < -200;   // undefined
+    // })
+    // console.log(res);
+
+    // let res2 = array.findIndex(function(item){
+    //   // return item < 2;   // 0,返回的是1的索引
+    //   return item < -200;   // -1
+    // })
+    // console.log(res2);
+
+    /* 
+      fill() 
+        此方法对数组进行填充，如果只传一个参数则将源数组中所有的项都替换成传入的参数，第二个参数开始为需要替换的位置；
+     */
+
+    const array = [1,2,3,4,5];
+    // array.fill('a');      // ["a", "a", "a", "a", "a"]  默认替换全部项
+    // console.log(array);
+    // array.fill('a', 1);   // [1, "a", "a", "a", "a"]    替换第一项后面的所有项
+    // array.fill('a', 0);   // ["a", "a", "a", "a", "a"]  替换所有项，和只写一个参数作用一样
+    // array.fill('a', -4);  // [1, "a", "a", "a", "a"]    替换后四项
+    array.fill('a', 1, 3);   // [1, "a", "a", 4, 5]        替换位置第一项和第三项之间的项，不替换开始项！！！替换结尾项！！！
+    console.log(array);
+
+  </script>
+</body>
+
+</html>

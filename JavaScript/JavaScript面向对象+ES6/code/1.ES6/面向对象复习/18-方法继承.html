@@ -1,0 +1,56 @@
+ <!DOCTYPE html>
+ <html lang="en">
+
+ <head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+ </head>
+
+ <body>
+   <script>
+     // 构造函数 - 动物基类
+     function Animal(age, weight) {
+       this.age = age;
+       this.weight = weight;
+     }
+
+     // 原型对象 - 添加动物吃的方法
+     Animal.prototype.eat = function () {
+       console.log("调用了动物吃东西的方法!");
+     }
+
+     // 构造函数 - 猫类
+     function Cat(age, weight, color) {
+       // 让猫类继承动物基类的age、weight属性
+       Animal.call(this, age, weight);
+       this.color = color;
+     }
+
+     // 右边：创建一个新的 Animal 实例对象
+     // 左边：把实例对象赋值给了 Cat 的原型对象，覆盖原来猫的原型
+     Cat.prototype = new Animal();
+
+     // 原型对象 - 叫技能：喵喵喵
+     Cat.prototype.say = function () {
+       console.log("喵喵喵!!!");
+     }
+
+     // 实例对象
+     var c1 = new Cat(2, "5kg", "粉色");
+
+     console.log(c1); // 三个属性
+     // c1 能调用自己原型上的say方法
+     c1.say();
+     // c1 还能调用自己原型的原型上的eat方法
+     c1.eat();
+
+     // 访问一个 c1 不存在的属性，返回undefined
+     //  console.log(c1.aaaa);
+
+     // 调用一个c1不存在的方法，报错 is not a function
+     // c1.aaaaa();
+   </script>
+ </body>
+
+ </html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // var tmp = 123;
+    // if (true) { // 这里是一个块级作用域
+    //   let tmp;
+    //   tmp = 'abc'; // 报错：ReferenceError，原因是这个块级作用域里面出现了let，形成暂时性死区
+    //   // console.log(tmp)
+    // }
+    // // console.log(tmp)
+
+
+    // if(true) {
+    //   // TDZ开始
+    //   // tmp = 'abc';    // error ReferenceError
+    //   // console.log(tmp);    // error ReferenceError
+
+    //   let tmp;    // TDZ结束
+    //   console.log(tmp);    // undefined
+    //   tmp = 123;
+    //   console.log(tmp)   // 123
+    // }
+
+
+
+    // typeof 操作 
+    // console.log(typeof x);    // ReferenceError
+    // let x = 123;
+
+    // 如果一个变量根本没有被声明，使用typeof反而不会报错。
+    console.log(typeof variable);   // undefined
+
+
+    /* 
+      总结：
+        1.ES6 明确规定，如果区块中存在let和const命令，这个区块对这些命令声明的变量，从一开始就形成了封闭作用域。凡是在声明之前就使用这些变量，就会报错。
+        2.总之，在代码块内，使用let命令声明变量之前，该变量都是不可用的。这在语法上，称为“暂时性死区”（temporal dead zone，简称 TDZ）。
+        3.简单来说在块级作用域中，在let命令声明变量之前，只要使用变量就会报错，都属于变量的死区。
+        4.let的设计就是为了让大家养成良好的编程习惯，变量一定要在声明之后使用，否则就报错。
+    */
+  </script>
+</body>
+
+</html>

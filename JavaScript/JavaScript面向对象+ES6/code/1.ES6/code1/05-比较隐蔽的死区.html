@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // function bar(x=y, y=2) {
+    //   return [x,y];
+    // }
+
+    // bar();    // ReferenceError
+
+    // 因为x的默认值为y，此时y还没有声明，属于死区,因此会报错，如果y的默认值是x，那么就不会报错
+
+    // function bar2(x=2, y=2) {
+    //   return [x,y];
+    // }
+    // console.log(bar2());    // [2,2]
+    
+    // 不报错
+    // var x = x;
+    // console.log(x)    // undefined
+    
+    // 报错 ReferenceError
+    /* 
+      报错也是因为暂时性死区，使用let声明变量时，只要变量在还没有声明完成前使用，就会报错；
+      变量x的声明语句还没有执行完成前，就去取x的值导致报错发生。
+     */
+    let x = x;
+    console.log(x) 
+
+
+    /* 
+      总结：
+      以后的开发中全部使用let、const，一方面是为了减少代码因为变量提升出错的概率，另外也是为了养成良好的编程习惯，变量没有声明完成之前就不要使用！
+      暂时性死区的本质就是，只要一进入当前作用域，所要使用的变量就已经存在了，但是不可获取，只有等到声明变量的那一行代码出现才可以获取和使用该变量。
+     */
+  </script>
+</body>
+</html>

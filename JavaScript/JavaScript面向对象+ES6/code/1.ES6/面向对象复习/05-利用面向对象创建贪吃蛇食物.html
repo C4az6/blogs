@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #map {
+      width: 800px;
+      height: 400px;
+      background-color: #333;
+      margin: 50px auto;
+      position: relative;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <script>
+    // 获取随机数函数
+    function getRandomNum(num) {
+      return Math.ceil(Math.random() * num)
+    }
+
+    // 获取随机颜色
+    function getRandomColor(num) {
+      return Math.ceil(Math.random() * num)
+    }
+    var food = {
+      // 食物的属性
+      width: 20,
+      height: 20,
+      top: 0,
+      left: 0,
+      color: 'pink',
+      position: 'absolute',
+      element: "",
+      // 创建食物的方法
+      createFood: function () {
+        // 创建食物标签，获取地图标签，往地图标签下面插入食物标签
+        var foodElement = document.createElement('div');
+        var map = document.getElementById('map');
+        map.appendChild(foodElement)
+        // 设置样式
+        this.element = foodElement;
+        this.element.style.width = this.width + "px";
+        this.element.style.height = this.height + "px";
+        this.element.style.backgroundColor = this.color;
+        this.element.style.position = this.position
+      },
+
+      //获取随机位置
+      getRandomPosition: function () {
+        // 获取水平方向的随机位置
+        var positionLeft = getRandomNum(780 / 20) * 20;
+        // 获取垂直方向的随机位置
+        var positionTop = getRandomNum(380 / 20) * 20;
+        console.log(positionLeft, positionTop)
+        this.left = positionLeft
+        this.top = positionTop;
+        // 设置样式
+        this.element.style.left = this.left + "px";
+        this.element.style.top = this.top + "px";
+        console.log(this.element)
+      },
+
+      // 获取随机颜色
+      setRandomColor(num) {
+        this.color = `rgb(${getRandomColor(255)},${getRandomColor(255)},${getRandomColor(255)})`
+        console.log(this)
+        this.element.style.backgroundColor = this.color
+      }
+    }
+
+    food.createFood()
+    food.getRandomPosition()
+    food.setRandomColor()
+  </script>
+</body>
+
+</html>

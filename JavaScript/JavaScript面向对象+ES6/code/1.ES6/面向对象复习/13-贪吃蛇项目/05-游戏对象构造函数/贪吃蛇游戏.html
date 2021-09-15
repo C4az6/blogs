@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src="./js/map.js"></script>
+  <script src="./js/food.js"></script>
+  <script src="./js/snake.js"></script>
+  <script>
+    // 构造函数 - 用于游戏对象
+    function Game() {
+      // 游戏属性 - 地图
+      this.map = new Map();
+      // 游戏属性 - 食物
+      this.food = new Food({map: this.map});
+      // 游戏属性 - 蛇
+      this.snake = new Snake({map: this.map, direction:'down'});
+    }
+
+    // 实例化游戏对象，实例的时候同时创建 地图，食物，蛇 三个对象
+    var game = new Game();
+    // 检查对象的数据
+    console.log(game);
+  </script>
+</body>
+
+</html>

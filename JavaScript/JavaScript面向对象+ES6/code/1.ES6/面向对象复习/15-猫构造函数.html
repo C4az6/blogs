@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 猫构造函数
+    function Cat(age, weight, color) {
+      this.age = age;
+      this.weight = weight;
+      this.color = color;
+    }
+
+    // 原型对象 - 添加吃方法
+    Cat.prototype.eat = function () {
+      console.log("猫在吃东西...");
+    }
+
+    // 原型对象 - 叫方法
+    Cat.prototype.say = function () {
+      console.log("猫在叫...");
+    }
+
+    var c1 = new Cat(4, '5kg');
+    c1.eat();
+    c1.say();
+  </script>
+</body>
+
+</html>

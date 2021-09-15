@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    debugger;
+    // // fn2 是局部函数，如果要执行到fn2必须要先执行外层函数
+    // function fn1() {
+    //   console.log("执行了外层函数 fn1");
+    //   // 里层创建 fn2 是局部函数
+    //   function fn2() {
+    //     console.log("执行了里层函数 fn2");
+    //   }
+    //   // 现在只能在局部函数内调用
+    //   fn2();
+    // }
+    // fn1();
+
+    // ;(function () {
+    //   function fn1() {
+    //     console.log("执行了外层函数 fn1");
+
+    //     function fn2() {
+    //       console.log("执行了里层函数 fn2");
+    //     }
+    //     // 现在只能在局部函数内调用
+    //     fn2();
+    //     // 把里层函数直接挂载到window变成全局函数
+    //     window.fn2 = fn2;
+    //   }
+
+    //   // 先执行外层函数
+    //   fn1();
+    //   // 调用里层函数
+    //   fn2();
+    // })();
+
+    // // 闭包外面居然还能调用，因为你把fn2 设置成了全局函数
+    // // 出现全局变量污染问题，覆盖人家的代码，或者人家覆盖你的代码
+    // fn2();
+
+    (function () {
+      function fn1() {
+        console.log("执行了外层函数 fn1");
+        // 里层函数创建 fn2 是局部函数
+        function fn2() {
+          console.log("执行了里层函数 fn2");
+        }
+        return fn2;
+      }
+
+      // 先执行外函数
+      var res = fn1();
+      console.log(res);
+      res();
+    })()
+  </script>
+</body>
+
+</html>

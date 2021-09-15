@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    var animal = {
+      // 属性 - 就是这个对象的一些特征
+      species: 'lion',
+      height: "200cm",
+      weight: "200KG",
+
+      // 方法 - 就是这个对象的一些功能
+      run: function(){
+        console.log(this)
+        console.log(this.species + " is " + "Running...");
+      }
+    }
+
+
+    console.log(animal.species)
+    console.log(animal.height)
+    console.log(animal.weight)
+    animal.run()
+  </script>
+</body>
+</html>

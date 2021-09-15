@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <button>按钮1</button>
+  <button>按钮2</button>
+  <button>按钮3</button>
+  <button>按钮4</button>
+
+  <script>
+    /* 
+    let命令：用来声明一个变量，和var非常类似
+    const命令：用来声明一个常量，常量就是不可以变化的量
+*/
+
+    // 用let声明的注意事项
+
+    // 1 使用let声明的变量，所声明的变量只在命令所在的代码快内有效。
+    // {
+    //   let a = 1;
+    //   var b = 2;
+    //   console.log("代码块内打印a: ", a)
+    // }
+
+    // console.log(a);   // 报错，找不到变量a
+
+
+    // 2 使用let命令声明的变量在预解析的时候不会被提升。
+    // console.log(a);    // undefined
+    // var a = 1;
+
+
+    // console.log(b);   // 报错，不能在初始化之前访问b
+    // let b = 2;
+
+
+    // console.log(typeof c);    // undefined
+    // var c = 100;
+
+
+    // console.log(typeof c2);   // 报错，不能在初始化之前访问b
+    // let c2 = 1000
+
+    // console.log(typeof c3);   // undefined
+    // var c3;
+
+    // console.log(c4);    // undefined
+    // var c4 = 'alex';
+
+    // let f = 10;
+    // function fn(){
+    //   console.log("f: ", f)
+    //   f = 100;
+    //   console.log(f)
+    // }
+
+    // fn();
+
+    // 3 let不允许在同一个作用域下声明已经存在的变量。
+    // var a = 1;
+    // let a;
+
+    // let b = 1;
+    // let b = 2;
+
+
+    // ---------------------------------
+    // let在for循环中的应用
+
+    // 给每个button按钮绑定点击事件,点击事件触发后打印按钮的下标
+    var btns = document.querySelectorAll('button');
+
+    // 实现方式1：给每个button按钮添加下标
+    // for(var i=0; i<btns.length; i++) {
+    //   btns[i].index = i;
+    //   btns[i].onclick = function() {
+    //     // 为什么打印的是4，因为等你点击的时候循环已经结束了，i的值已经累计到了4
+    //     console.log(this.index)
+    //   }
+    // }
+
+    // 实现方式2：使用闭包方式
+    // for(var i=0; i<btns.length; i++) {
+    //   // 每次循环都会调用这个函数
+    //   (function(i) {
+    //     btns[i].onclick = function(){
+    //       console.log(i)
+    //     }
+    //   })(i)
+
+
+    //   // 方式2
+    //   function fn(i){
+    //     console.log(i)
+    //     btns[i].onclick = function(){
+    //       console.log(i)
+    //     }
+    //   }
+    //   fn(i)
+    // }
+
+
+    // 实现方式3：使用let实现
+    for (let i = 0; i < btns.length; i++) {
+      btns[i].onclick = function () {
+        console.log(i)
+      }
+    }
+  </script>
+</body>
+
+</html>

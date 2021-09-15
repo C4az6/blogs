@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    debugger;
+    // 任何函数被调用的时候，内部都会有 this
+    // !!!!! call 主要就是在调用函数的时候， 改变 【函数内部this的指向】
+
+    // Cat 构造函数
+    function Cat(age, weight, color) {
+      // 年龄
+      this.age = age;
+      // 体重
+      this.weight = weight;
+      // 毛色
+      this.color = color;
+    }
+
+    // 创建一个 猫 对象
+    var c1 = {
+      name: '猫'
+    };
+
+    var c2 = {
+      name: '狗'
+    }
+
+    /* 
+      call 和 apply 都会直接调用到函数
+      bind 不直接调用函数，只是把函数复制了一份，并且改变了函数内部 this 的指向
+    */
+    var res = Cat.bind(c1, 22, '5kg', 'red');
+    console.log(res === Cat); // false，2个Cat函数的内存地址不一样
+    res();
+
+
+    // 实现效果一样
+    Cat.call(c1, 22, '5kg', 'purple'); // call自动调用函数
+    console.log(c1);
+
+    Cat.bind(c2, 22, '5kg', 'lightgreen')(); // bind 需要手动调用
+    console.log(c2);
+  </script>
+</body>
+
+</html>

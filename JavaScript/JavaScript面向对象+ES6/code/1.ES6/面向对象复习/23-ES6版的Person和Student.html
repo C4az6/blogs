@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 创建 Person 基类
+    class Person {
+      // 在 constructor 构造函数里面写属性
+      constructor(name, gender, age) {
+        this.name = name;
+        this.gender = gender;
+        this.age = age;
+      }
+
+      // 直接在 constructor 构造函数同层级下面写方法
+      // 跑 方法
+      run() {
+        console.log("调用了跑的方法...");
+      }
+
+      // 说方法
+      say() {
+        console.log("调用了说的方法...");
+      }
+    }
+
+    // 创建 Student 类
+    class Student extends Person {  
+      constructor(name, gender, age, stuNumber) {
+        // 使用super继承Person父类的属性，相当于之前的 Person.call(this, xxx,xxx)
+        super(name, gender, age)
+        this.stuNumber = stuNumber;
+      }
+      // extends关键词继承父类的方法，我们正常写类方法即可
+      // 写代码 方法
+      coding() {
+        console.log("调用了 写代码 方法!");
+      }
+    }
+
+    var s1 = new Student('赵四', '男', 30, '30f323-32381832-321328183');
+
+    console.log(s1); // 4个属性,3个方法
+    s1.run();
+    s1.say();
+    s1.coding();
+  </script>
+</body>
+
+</html>

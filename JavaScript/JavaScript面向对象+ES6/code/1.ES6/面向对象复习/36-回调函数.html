@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <input type="button" value="按钮" id="btn">
+  <script>
+    // 1. 查找元素
+    var btn = document.querySelector("#btn");
+
+    function fn() {
+      console.log("函数被调用了...");
+    }
+
+    // 2. 添加事件
+    // 事件处理函数就是回调函数，事件被触发的时候就会执行函数体内的代码
+    btn.addEventListener('click', fn);
+
+
+    // 定时器的第一个参数也是一个回调函数，等待定时器的时间到达，就自动执行
+    setInterval(fn, 1000);
+  </script>
+</body>
+
+</html>

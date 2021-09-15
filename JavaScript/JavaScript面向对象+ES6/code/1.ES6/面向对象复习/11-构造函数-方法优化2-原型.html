@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // —————————————————构造函数—————————————————————
+    // 创建构造函数
+    function Person(name, age){
+      this.name = name;
+      this.age = age;
+    }
+
+    // 函数在JS中其实就是个对象
+    // console.dir(Person);
+    
+    // Person.prototype 可以叫做 构造函数Person的原型或者原型对象
+    // 注意：在原型(prototype)上添加的方法，能给创建出来的实例对象共享方法
+    console.log(Person.prototype)
+    Person.prototype.gender = "男";
+    Person.prototype.say = function(){
+      console.log("hello, friends！");
+    }
+    console.log(Person.prototype)
+
+    // p1 就是通过构造函数创建的 【实例对象】
+    var p1 = new Person('张三', 23)
+    // 输出实例对象
+    console.log("p1: ", p1);
+
+    // 【原型对象】能被【实例对象】 和 【构造函数】 共享
+    // 实例对象.__proto__ 等同于 构造函数.prototype，属性和方法添加后能共享
+    console.log(p1.__proto__ === Person.prototype);   // true 内存地址是同一个
+
+    // 实例对象调用共享的方法
+    p1.say();   // hello, friends！
+  </script>
+</body>
+</html>

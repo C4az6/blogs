@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 字面量：创建数组
+    var arr1 = [11, 22, 33, 44];
+    // 构造函数：创建数组
+    var arr2 = new Array(11, 22, 33, 44);
+
+    // 数组的原型
+    // 保险起见，如果Array的原型上没有求最大值的时候才添加功能
+    if (Array.prototype.max === undefined) {
+      Array.prototype.max = function () {
+        // 参数null，代表不需要改变函数内 this 的指向
+        // 参数this，表示调用 max 函数时的那个对象
+        console.log("current this: ", this);
+        return Math.max.apply(null, this);
+      }
+    }
+
+    if (Array.prototype.min === undefined) {
+      // 数组的原型
+      Array.prototype.min = function () {
+        return Math.min.apply(null, this);
+      }
+    }
+
+    // 所有 数组 都是Array构造函数的实例对象
+    console.log(arr1);
+    console.log(arr2);
+
+    // 数组本质是实例对象，实例对象能共享原型的 max 方法
+    var res1 = arr1.max();
+    var res2 = arr2.min();
+
+    // 输出最大和最小值
+    console.log(res1);
+    console.log(res2);
+  </script>
+</body>
+
+</html>

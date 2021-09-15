@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /* 
+      什么是Symbol？
+      Symbol 表示独一无二的值。他是 JS 中的第七种数据类型。
+      
+      基本的数据类型：null、undefined、number、boolean、string、symbol
+      引用数据类型：object
+     */
+
+    let s1 = Symbol();
+    let s2 = Symbol();
+
+    // console.log(typeof s1); // symbol
+    // console.log(s1 === s2); // false
+
+    // Symbol数据类型不能转换成number类型，会报错，不能做任何运算
+
+    // Symbol作为对象的属性名
+    // let yyy = Symbol("yyy");
+
+    // const obj = {};
+
+    // obj[yyy] = "hello";
+
+    // console.log(obj);
+
+    // let ss = Symbol("ss");
+    // const data = {
+    //   [ss]: "hi"
+    // };
+
+    // console.log(data);
+    // console.log(data[ss]);
+
+    const data = {
+      [Symbol()]: 123,
+      a: 1,
+      b: 2
+    };
+    // console.log(data);
+    // console.log(data['Symbol()']);   // undefined
+
+    /* 
+      Symbol数据类型不能被for...in循环遍历，虽然不能被遍历，但是也不能是私有的属性，可以通过Object.getOwnPropertySymbols方法获取一个对象的所有的Symbol属性
+     */
+
+    for (let i in data) {
+      console.log(i);
+    }
+
+    console.log(Object.getOwnPropertySymbols(data));
+    console.log(data[Object.getOwnPropertySymbols(data)[0]]); // 123
+  </script>
+</body>
+
+</html>

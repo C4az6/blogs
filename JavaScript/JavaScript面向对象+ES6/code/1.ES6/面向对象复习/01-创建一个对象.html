@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 创建一个对象
+    var person = {
+      // 对象的属性 - 特征
+      height: "170cm",
+      age: 26,
+      gender: '女',
+      leg: '大长腿',
+      // 生活技能，也就是对象的方法，就是函数
+      liveSkill: function(){
+        console.log("生活技能： 煮饭");
+      },
+      sportSkill: function(){
+        console.log("运动技能：打篮球");
+      },
+      artSkill: function(){
+        console.log("艺术技能: 弹钢琴")
+      }
+    }
+
+    console.log(person);
+    // 编程中的对象主要是对 事和物进行了概括
+    // 编程的时候要把属性和方法写到对应的键值对中
+    // 方法：就是代表某个技能，比如煮饭，该功能是可以反复调用的
+    // 对象是无序的，不需要管输出顺序，只需要管书写顺序，数组是有序的。
+  </script>
+</body>
+</html>

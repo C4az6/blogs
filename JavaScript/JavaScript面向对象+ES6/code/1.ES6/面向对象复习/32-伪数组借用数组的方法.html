@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="box">盒子1</div>
+  <div class="box">盒子2</div>
+  <script>
+    // 1. 查找元素
+    var boxs = document.querySelectorAll(".box");
+    // 为什么叫伪数组
+    console.log(boxs);
+
+    /* 
+      伪数组：
+        不能调用数组原型上的方法，不是数组构造函数的实例。
+        只不过排列的时候用索引存数组，也有长度属性而已。    
+        
+        下面方式获取的都是伪数组
+        document.getElementsByTagName()
+        document.querySelectorAll()
+        arguments  函数实参的集合
+    */
+
+    // 真正的数组，Array 的实例对象才是数组
+    var arr = [11, 22, 33];
+    var arr2 = new Array(11, 22, 33);
+
+    console.log(arr);
+    console.log(arr2);
+
+    // var boxs = document.querySelectorAll(".box");
+    // var boxs = document.getElementsByClassName("box");
+    // console.log(boxs);
+
+    // 打印数组构造函数的原型对象
+    // console.log(Array.prototype);
+
+    // var res = Array.prototype.slice.call(boxs, 1);
+    // console.log("slice boxs: ", res);
+
+    // 只读属性和只读对象，只能获取，不能修改
+    function fn() {
+      console.log(arguments);
+      // console.log(Array.prototype.push);
+      // 数组原型的push方法
+      //    通过call改变 this 的指向变成 arguments
+      //    结果是：arguments 对象后，添加了 44 的数据
+
+      // 借用数组的push方法给伪数组增加数据
+      Array.prototype.push.call(arguments, 44);
+      // 删除添加参数后的集合 arguments
+      console.log(arguments);
+    }
+
+
+    fn(11, 22, 33);
+  </script>
+</body>
+
+</html>

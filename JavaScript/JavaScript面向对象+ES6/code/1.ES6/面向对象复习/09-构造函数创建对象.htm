@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // ————————————————工厂函数创建对象————————————————
+    // function createPerson(name, age) {
+    //   // 创建一个空对象
+    //   var person = new Object();
+    //   // 给对象添加属性
+    //   person.name = name;
+    //   person.age = age;
+    //   // 给对象添加方法
+    //   person.say = function(){
+    //     console.log(this.name + "： 我很666~~");
+    //   }
+    //   return person;
+    // }
+
+
+    // var p1 = createPerson('张三', 30);
+    // var p2 = createPerson('王五', 34);
+
+    // p1.say();
+    // p2.say();
+
+    // ————————————————构造函数————————————————
+    // 创建构造函数
+    function Person(name, age) {
+      this.name = name;
+      this.age = age;
+      this.say = function(){
+        console.log(this)
+        console.log("我是: " + this.name + "，我很666~~~~");
+      }
+    }
+
+    var p1 = new Person("超人", 100);
+    var p2 = new Person('蝙蝠侠', 120);
+    p1.say();
+    p2.say();
+    console.log(p1.say === p2.say); // false 因为2个函数的内存地址不同
+    
+  </script>
+</body>
+</html>

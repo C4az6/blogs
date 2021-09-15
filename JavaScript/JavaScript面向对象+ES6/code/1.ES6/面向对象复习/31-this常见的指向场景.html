@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /* 
+      口诀：this 默认指向调用该函数的那个对象
+      [函数]：this 一般出现在函数内部
+      [调用]：this 的指向其实是在调用的时候才确定的
+      [对象]：this 一般指向某个对象
+    */
+
+
+    // 把函数保存到变量 fn 中，不同场景调用时 this 指向不同
+    var fn = function () {
+      console.log(this);
+    }
+
+
+    // 1. 普通函数
+    // this 指向 window对象
+    fn();
+
+
+    // 2. 对象字面量的方法
+    // this 指向：指向调用的对象
+    var obj = {
+      name: '张三',
+      say: fn
+    }
+
+    obj.say();
+
+    // 3. 事件处理函数，事件需要触发才会有 this 输出
+    // this 指向 事件源 对象
+    document.onclick = fn;
+    document.addEventListener("click", fn);
+
+    // 4. 定时器的回调函数
+    // this 指向 window 对象
+    // window.setInterval(fn, 1000);
+
+    // 5. 构造函数
+    // this 指向 实例对象
+    function Person() {
+      this.name = "小红";
+    }
+    // 构造函数通过 new 关键词调用，new 会创建一个新的对象
+    var p1 = new Person(); // 构造函数执行完毕后会把 实例对象 赋值给p1
+    // console.log(p1)
+
+    // 6. 原型对象
+    // this指向：原型对象方法一般都被实例对象调用，所以指向调用的实例对象
+    Array.prototype.max = fn;
+    // arr 是Array的实例对象
+    var arr = [11];
+    // arr调用了max，所以内部的this指向arr
+    arr.max();
+  </script>
+</body>
+
+</html>

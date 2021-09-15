@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /* 
+        函数能不能在块级作用域之中声明？这是一个相当令人混淆的问题。
+        ES5 规定，函数只能在顶层作用域和函数作用域之中声明，不能在块级作用域声明。
+        实际证明在块级作用域中声明函数是OK的，没有报错，原因是浏览器为了兼容旧的代码，没有遵守规定。
+     */
+
+
+    // 情况1
+    // if (true) {
+    //   function f1() {
+    //     console.log("hello")
+    //   }
+    // }
+
+    // // 情况二
+    // try {
+    //   function f2(){
+    //     console.log("hello 2")
+    //   }
+    // } catch (error) {
+
+    // }
+
+    // f1()
+    // f2()
+
+
+    // ES6 引入了块级作用域，明确允许在块级作用域之中声明函数。ES6 规定，块级作用域之中，函数声明语句的行为类似于let，在块级作用域之外不可引用。
+    // function f() {
+    //   console.log("i am outside!");
+    // }
+
+    // (function () {
+    //   if (true) {
+    //     // 重复声明一次函数f
+    //     function f(){console.log('i am inside!');}
+    //   }
+    //   f()
+    // }());
+
+    // 浏览器的 ES6 环境
+    // function f() {
+    //   console.log('I am outside!');
+    // }
+
+    // (function () {
+    //   if (false) {
+    //     // 重复声明一次函数f
+    //     function f() {
+    //       console.log('I am inside!');
+    //     }
+    //   }
+
+    //   f();
+    // }());
+
+    // 考虑到环境导致的行为差异太大，应该避免在块级作用域内声明函数。如果确实需要，也应该写成函数表达式，而不是函数声明语句。
+
+    // ES6 的块级作用域必须有大括号 如果没有大括号，JavaScript 引擎就认为不存在块级作用域。
+    // 第一种写法，报错
+    // if(true) let x = 1;
+
+    // 第二种写法，不报错
+    // if(true) {
+    //   let x = 2;
+    //   console.log(x)
+    // }
+
+    // 函数声明也是如此，严格模式下，函数只能声明在当前作用域的顶层。
+
+    // 不报错
+    // 'use strict';
+    // if (true) {
+    //   function f() {}
+    // }
+
+    // 报错
+    'use strict';
+    if (true)
+
+    function f() {}
+  </script>
+</body>
+
+</html>

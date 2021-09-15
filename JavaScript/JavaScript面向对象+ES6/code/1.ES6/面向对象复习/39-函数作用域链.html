@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    debugger;
+    // 全局变量，能在任意位置访问，也能修改
+    // var globalNum = "全局变量";
+
+    // // 全局函数
+    // function globalFn(){
+    //   // 修改全局变量
+    //   globalNum = 123;
+    //   // 可以调用全局变量
+    //   console.log(globalNum);
+    //   function localfn1() {
+    //     // 可以调用全局变量
+    //     console.log(globalNum);
+    //   }
+    //   localfn1();
+    // }
+    // globalFn();
+
+
+    function fn1() {
+      // 在函数内创建的叫局部变量
+      var localStr = "局部变量";
+      // 局部函数
+      function localFn1() {
+        // 外函数创建的局部变量，也能在里面所使用到
+        console.log(localStr);
+        var num = 1;
+      }
+
+      function localFn2() {
+        // 外函数创建的局部变量，也能在里面所使用到
+        console.log(localStr);
+        var num = 2;
+      }
+      localFn1();
+    }
+    fn1();
+  </script>
+</body>
+
+</html>

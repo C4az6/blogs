@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #map {
+      margin: 50px auto;
+      width: 800px;
+      height: 400px;
+      position: relative;
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    // 创建食物的构造函数
+    function Food(width,height,backgroundColor,left,top){
+      this.width = width;
+      this.height = height;
+      this.backgroundColor = backgroundColor;
+      this.left = left;
+      this.top = top;
+      this.element = "";   // 存储页面食物盒子
+    }
+    
+    // 创建盒子的方法
+    Food.prototype.render = function() {
+      var map = document.getElementById("map");
+      var box = document.createElement('div');
+      map.appendChild(box);
+      this.element = box;
+      this.element.style.width = this.width + "px";
+      this.element.style.height = this.height + "px";
+      this.element.style.backgroundColor = this.backgroundColor;
+      this.element.style.left = this.left + "px";
+      this.element.style.top = this.top + "px";
+      this.element.style.position = 'absolute'
+    }
+
+    // 随机位置的方法
+    Food.prototype.ranPos = function() {
+      var posLeft = getRandomNum(780/this.width) * this.width;
+      var posTop = getRandomNum(380/this.height) * this.height;
+      this.element.style.left = posLeft + "px";
+      this.element.style.top = posTop + "px";
+      this.left = posLeft;
+      this.top = posTop;
+    }
+
+    // 随机颜色的方法
+    Food.prototype.ranColor = function() {
+      this.element.style.backgroundColor = `rgb(${getRandomNum(255)},${getRandomNum(255)},${getRandomNum(255)})`
+    }
+
+    // 点击食物 食物更新颜色和位置
+    Food.prototype.bindClick = function() {
+      var that = this;
+      this.element.addEventListener('click', function() {
+        // 事件处理函数内部this指向事件源，所以这个函数内不能使用this
+        that.ranPos();
+        that.ranColor();
+      })
+    }
+
+    // 获取随机数公共方法
+    function getRandomNum(num) {
+      return Math.ceil(Math.random() * num)
+    }
+    var f1 = new Food(20,20,'pink',0,0)
+    f1.render();
+    f1.ranPos();
+    f1.ranColor();
+    f1.bindClick();
+
+  </script>
+</body>
+</html>
